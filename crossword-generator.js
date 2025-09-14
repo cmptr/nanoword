@@ -402,6 +402,31 @@ class CrosswordGenerator {
     }
   }
 
+  canPlaceWord(word, candidateWord) {
+    // Check if the candidate word can be placed without conflicts
+    for (let i = 0; i < word.positions.length; i++) {
+      const pos = word.positions[i];
+      
+      // Validate grid bounds
+      if (pos.row < 0 || pos.row >= this.gridSize || pos.col < 0 || pos.col >= this.gridSize) {
+        return false;
+      }
+      
+      const cell = this.grid[pos.row][pos.col];
+      if (!cell) {
+        return false;
+      }
+      
+      const letter = candidateWord[i].toUpperCase();
+      
+      // If there's already a letter in this cell, it must match
+      if (cell.contents && cell.contents !== "" && cell.contents !== letter) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   async fillWord(word, direction) {
     const len = word.length;
     let queryParams = "?".repeat(len);
@@ -431,18 +456,32 @@ class CrosswordGenerator {
         5: ["happy", "world", "light", "water", "music", "dream", "peace", "heart"]
       };
 
-      const fallback = fallbackWords[len] || ["word"];
-      const randomFallback = fallback[Math.floor(Math.random() * fallback.length)];
+        const fallback = fallbackWords[len] || ["word"];
+        
+        // Try fallback words until we find one that fits
+        let selectedFallback = null;
+        for (let fallbackWord of fallback) {
+          if (this.canPlaceWord(word, fallbackWord)) {
+            selectedFallback = fallbackWord;
+            break;
+          }
+        }
+        
+        // If no fallback fits, use the first one anyway (with warning)
+        if (!selectedFallback) {
+          selectedFallback = fallback[0];
+          console.warn(`Fallback word '${selectedFallback}' may cause intersection conflicts`);
+        }
 
-      word.answer = randomFallback.toUpperCase();
-      word.clue = "A simple word for the crossword puzzle";
+        word.answer = selectedFallback.toUpperCase();
+        word.clue = "A simple word for the crossword puzzle";
     } else {
       // Shuffle and find a suitable word
       const shuffledWordList = retrievedWordList.sort((a, b) => Math.random() - 0.5);
 
       let retrievedWord = null;
       for (let candidate of shuffledWordList) {
-        if (!this.validateWord(candidate, len)) {
+        if (!this.validateWord(candidate, len) && this.canPlaceWord(word, candidate.word)) {
           retrievedWord = candidate;
           break;
         }
@@ -456,9 +495,24 @@ class CrosswordGenerator {
           5: ["happy", "world", "light", "water", "music", "dream", "peace", "heart"]
         };
         const fallback = fallbackWords[len] || ["word"];
-        const randomFallback = fallback[Math.floor(Math.random() * fallback.length)];
+        
+        // Try fallback words until we find one that fits
+        let selectedFallback = null;
+        for (let fallbackWord of fallback) {
+          if (this.canPlaceWord(word, fallbackWord)) {
+            selectedFallback = fallbackWord;
+            break;
+          }
+        }
+        
+        // If no fallback fits, use the first one anyway (with warning)
+        if (!selectedFallback) {
+          selectedFallback = fallback[0];
+          console.warn(`Fallback word '${selectedFallback}' may cause intersection conflicts`);
+        }
+        
         retrievedWord = {
-          word: randomFallback,
+          word: selectedFallback,
           defs: ["n\tA simple word for the crossword puzzle"]
         };
       }
@@ -473,10 +527,36 @@ class CrosswordGenerator {
       }
     }
 
-    // Fill the word in the grid
-    word.positions.forEach((pos, index) => {
-      this.grid[pos.row][pos.col].contents = word.answer[index];
-    });
+    // Fill the word in the grid, but validate intersections first
+    for (let i = 0; i < word.positions.length; i++) {
+      const pos = word.positions[i];
+      
+      // Validate grid bounds
+      if (pos.row < 0 || pos.row >= this.gridSize || pos.col < 0 || pos.col >= this.gridSize) {
+        console.warn(`Invalid position: [${pos.row}][${pos.col}]`);
+        continue;
+      }
+      
+      const cell = this.grid[pos.row][pos.col];
+      if (!cell) {
+        console.warn(`Cell not found at position: [${pos.row}][${pos.col}]`);
+        continue;
+      }
+      
+      const letter = word.answer[i];
+      
+      // Check if there's already a letter in this cell
+      if (cell.contents && cell.contents !== "") {
+        // If the existing letter doesn't match, we have a conflict
+        if (cell.contents !== letter) {
+          console.warn(`Intersection conflict: cell [${pos.row}][${pos.col}] has '${cell.contents}' but word needs '${letter}'`);
+          // For now, we'll overwrite, but this indicates a problem with word selection
+          // TODO: Implement better word selection that avoids conflicts
+        }
+      }
+      
+      cell.contents = letter;
+    }
   }
 
   generateSolution() {
