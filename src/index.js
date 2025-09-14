@@ -389,12 +389,16 @@ function generateHTML(puzzleData) {
         flex-direction: column;
         align-items: center;
         gap: 20px;
+        width: 100%;
+        max-width: 100%;
       }
       
       .clue-display {
         text-align: center;
+        width: 100%;
         max-width: 600px;
         margin-bottom: 20px;
+        padding: 0 20px;
       }
       
       .clue-text {
@@ -405,6 +409,8 @@ function generateHTML(puzzleData) {
         padding: 20px;
         background: white;
         border-radius: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       
       .table-container {
@@ -685,83 +691,79 @@ function generateHTML(puzzleData) {
         }
       }
       
-      @media screen and (max-width: 750px) {
-        .puzzle-main {
-          flex-direction: column;
-          align-items: center;
+      @media screen and (max-width: 768px) {
+        .daily-container {
+          padding: 10px;
         }
-
-        .puzzle-info {
-          margin-top: 3rem;
-          width: 100%;
-          align-self: center;
-          margin-right: 0rem;
-          flex-direction: row;
-          min-height: min-content;
-          margin-bottom: 4rem;
+        
+        .clue-text {
+          font-size: 1.4rem;
+          padding: 15px;
+          margin: 0 10px;
         }
-
-        .clues-section {
-          margin-right: 4rem;
-          min-width: 35%;
+        
+        .word-container {
+          gap: 15px;
         }
         
         .table-container {
           width: 100%;
+          overflow-x: auto;
+          padding: 0 10px;
         }
-
+        
         table {
-          height: 45rem;
-          width: 45rem;
-          max-height: 45rem;
-          min-height: 45rem;
-          max-width: 45rem;
-          min-width: 45rem;
           margin: 0 auto;
+          width: auto;
+          min-width: fit-content;
         }
         
-        td .contents {
-          font-size: 4.5rem;
-        }
-      }
-
-      @media screen and (max-width: 550px) {
         td {
-          width: 2.5rem;
-          height: 2.5rem;
-          min-width: 25px;
-          min-height: 25px;
-        }
-        
-        td .number {
-          font-size: 19.13625px;
+          height: 60px;
+          width: 60px;
+          min-height: 60px;
+          min-width: 60px;
         }
         
         td .contents {
-          font-size: 3.75rem;
-        }
-        
-        .puzzle-info {
-          margin-top: 1rem;
+          font-size: 36px;
         }
       }
 
-      @media screen and (max-width: 500px) {
-        table {
-          width: 30rem;
-          height: 30rem;
-          min-width: 30rem;
-          max-width: 30rem;
-          min-height: 30rem;
-          max-height: 30rem;
+      @media screen and (max-width: 480px) {
+        .clue-text {
+          font-size: 1.2rem;
+          padding: 12px;
+          margin: 0 5px;
         }
         
-        .puzzle-info {
-          width: 30rem;
+        td {
+          height: 50px;
+          width: 50px;
+          min-height: 50px;
+          min-width: 50px;
         }
         
         td .contents {
-          font-size: 3.15rem;
+          font-size: 30px;
+        }
+      }
+
+      @media screen and (max-width: 360px) {
+        .clue-text {
+          font-size: 1rem;
+          padding: 10px;
+        }
+        
+        td {
+          height: 45px;
+          width: 45px;
+          min-height: 45px;
+          min-width: 45px;
+        }
+        
+        td .contents {
+          font-size: 27px;
         }
       }
     </style>
