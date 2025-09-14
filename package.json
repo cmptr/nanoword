@@ -1,0 +1,31 @@
+{
+  "name": "nanowords-daily",
+  "version": "1.0.0",
+  "description": "Daily crossword puzzle generator CLI",
+  "main": "daily-puzzle.js",
+  "bin": {
+    "nanowords-daily": "./daily-puzzle.js"
+  },
+  "scripts": {
+    "start": "node daily-puzzle.js",
+    "generate": "node daily-puzzle.js generate",
+    "solve": "node daily-puzzle.js solve",
+    "show": "node daily-puzzle.js show",
+    "list": "node daily-puzzle.js list",
+    "serve": "node serve-daily.js",
+    "demo": "node example-usage.js",
+    "dev": "node index.js",
+    "dev-refactored": "node refactoredIndex.js"
+  },
+  "keywords": ["crossword", "puzzle", "daily", "cli"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.7.0",
+    "chalk": "^4.1.2",
+    "readline-sync": "^1.4.10"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

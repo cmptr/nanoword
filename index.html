@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css" />
+    <title>Nanowords</title>
+  </head>
+  <body>
+    <div class="modal"><h2>Generating new Nanowords puzzle...</h2></div>
+    <div class="app">
+      <div class="header">
+        <h1>
+          <span class="title-word">Nanowords</span>
+        </h1>
+      </div>
+      <div class="content-container">
+        <div class="table-container">
+          <div class="controls">
+            <div class="timer-container">
+              <div class="timer-label">Time:</div>
+              <div class="timer-display" id="timer">00:00</div>
+            </div>
+            <div class="buttons">
+              <button class="reveal">Reveal</button
+              ><button class="new">New</button>
+            </div>
+          </div>
+          <table>
+            <tr id="0">
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr id="1">
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr id="2">
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr id="3">
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr id="4">
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+          </table>
+        </div>
+        <br />
+        <br />
+        <div class="message">
+          <h2>
+            Congratulations, you have completed the Nanowords puzzle! Click 'New' or
+            refresh page to generate a new puzzle.
+          </h2>
+        </div>
+        <div class="container">
+          <div class="across-card"></div>
+          <div class="down-card"></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-container example-container">
+      <p class="footer-content example-desc">
+        This is an example project application. To see more of my work, visit
+        <a href="https://vincentcoraldean.com">my portfolio site</a>.
+      </p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./refactoredIndex.js"></script>
+  </body>
+</html>

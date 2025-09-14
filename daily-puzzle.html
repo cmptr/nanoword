@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css" />
+    <title>Nanowords Daily Puzzle</title>
+    <style>
+      .daily-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .puzzle-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .puzzle-date {
+        font-size: 1.2rem;
+        color: #666;
+        margin-top: 10px;
+      }
+      
+      .loading {
+        text-align: center;
+        padding: 50px;
+        font-size: 1.2rem;
+        color: #666;
+      }
+      
+      .error {
+        text-align: center;
+        padding: 50px;
+        color: #d32f2f;
+        background: #ffebee;
+        border: 1px solid #ffcdd2;
+        border-radius: 8px;
+        margin: 20px;
+      }
+      
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin: 20px 0;
+      }
+      
+      .timer-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .timer-label {
+        font-size: 1rem;
+        color: #666;
+      }
+      
+      .timer-display {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1976d2;
+      }
+      
+      .hint-counter {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 20px;
+      }
+      
+      .hint-label {
+        font-size: 0.9rem;
+        color: #666;
+      }
+      
+      #hintCount {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #f57c00;
+        background-color: #fff3e0;
+        padding: 2px 8px;
+        border-radius: 4px;
+        min-width: 20px;
+        text-align: center;
+      }
+      
+      .control-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      
+      .hint-button, .check-button, .clear-button, .reveal-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Libre Franklin", sans-serif;
+      }
+      
+      .hint-button {
+        background-color: #fff3e0;
+        color: #f57c00;
+        border: 1px solid #ffb74d;
+      }
+      
+      .hint-button:hover {
+        background-color: #ffe0b2;
+      }
+      
+      .hint-button:disabled {
+        background-color: #f5f5f5;
+        color: #999;
+        border-color: #ddd;
+        cursor: not-allowed;
+      }
+      
+      .check-button {
+        background-color: #e8f5e8;
+        color: #2e7d32;
+        border: 1px solid #4caf50;
+      }
+      
+      .check-button:hover {
+        background-color: #c8e6c9;
+      }
+      
+      .clear-button {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+        border: 1px solid #ba68c8;
+      }
+      
+      .clear-button:hover {
+        background-color: #e1bee7;
+      }
+      
+      .reveal-button {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef5350;
+      }
+      
+      .reveal-button:hover {
+        background-color: #ffcdd2;
+      }
+      
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Libre Franklin", sans-serif;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary {
+        background: linear-gradient(rgb(1, 94, 89), rgb(1, 67, 70));
+        color: white;
+      }
+      
+      .btn-primary:hover {
+        background: linear-gradient(rgb(1, 77, 73), rgb(1, 49, 51));
+      }
+      
+      .btn-secondary {
+        background: linear-gradient(rgb(61, 61, 61), rgb(15, 15, 15));
+        color: #eee;
+      }
+      
+      .btn-secondary:hover {
+        background: linear-gradient(rgb(75, 75, 75), rgb(32, 32, 32));
+      }
+      
+      .content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .puzzle-main {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+        width: 100%;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      
+      .puzzle-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 300px;
+        max-width: 400px;
+      }
+      
+      .clues-section {
+        flex: 1;
+        max-width: 400px;
+        margin-bottom: 20px;
+      }
+      
+      .clues-section h3 {
+        color: #1a5f5a;
+        border-bottom: 2px solid #1a5f5a;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+      }
+      
+      .clue-item {
+        margin-bottom: 10px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+      
+      .clue-number {
+        font-weight: bold;
+        color: #1a5f5a;
+        margin-right: 8px;
+      }
+      
+      .clue-text {
+        color: #333;
+      }
+      
+      .clue-length {
+        color: #666;
+        font-size: 0.9rem;
+        margin-left: 8px;
+      }
+      
+      td.selected {
+        background-color: #e3f2fd !important;
+        border: 2px solid #1976d2 !important;
+      }
+      
+      td:focus {
+        outline: none;
+      }
+      
+      td.hint-revealed .contents {
+        color: #f57c00;
+        font-weight: bold;
+        background-color: #fff8e1;
+        border-radius: 3px;
+        padding: 1px 3px;
+      }
+      
+      @media (max-width: 768px) {
+        .puzzle-main {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .puzzle-info {
+          min-width: auto;
+          width: 100%;
+        }
+        
+        .controls {
+          flex-direction: column;
+          gap: 15px;
+        }
+        
+        .control-buttons {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="daily-container">
+      <div class="puzzle-header">
+        <h1>
+          <span class="title-word">Nanowords</span>
+        </h1>
+        <div class="puzzle-date" id="puzzleDate">Loading...</div>
+      </div>
+
+      <div id="loading" class="loading">
+        🎯 Loading today's puzzle...
+      </div>
+
+      <div id="error" class="error" style="display: none;">
+        ❌ Error loading puzzle. Please try again later.
+      </div>
+
+      <div id="puzzleContent" style="display: none;">
+        <div class="content-container">
+          <div class="controls">
+            <div class="timer-container">
+              <div class="timer-label">Time:</div>
+              <div class="timer-display" id="timer">00:00</div>
+              <div class="hint-counter">
+                <span class="hint-label">Hints:</span>
+                <span id="hintCount">0</span>
+              </div>
+            </div>
+            <div class="control-buttons">
+              <button id="hintBtn" class="hint-button">💡 Hint</button>
+              <button id="checkBtn" class="check-button">✓ Check</button>
+              <button id="clearBtn" class="clear-button">🗑 Clear</button>
+              <button id="revealBtn" class="reveal-button">👁 Reveal</button>
+            </div>
+          </div>
+          
+          <div class="puzzle-main">
+            <div class="table-container">
+              <table id="puzzleGrid">
+                <!-- Grid will be generated here -->
+              </table>
+            </div>
+            
+            <div class="puzzle-info">
+              <div class="clues-section">
+                <h3>Across</h3>
+                <div id="acrossClues">
+                  <!-- Across clues will be populated here -->
+                </div>
+              </div>
+              
+              <div class="clues-section">
+                <h3>Down</h3>
+                <div id="downClues">
+                  <!-- Down clues will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message" id="completionMessage" style="display: none;">
+        <h2>🎉 Congratulations! You've completed today's Nanowords puzzle!</h2>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let puzzleData = null;
+      let timerInterval = null;
+      let startTime = null;
+      let isTimerRunning = false;
+      let hintCount = 0;
+      let maxHints = 10;
+
+      // Timer functionality
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      function updateTimer() {
+        if (!startTime || !isTimerRunning) return;
+        
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('timer').textContent = formatTime(elapsed);
+      }
+
+      function startTimer() {
+        if (isTimerRunning) return;
+        
+        startTime = Date.now();
+        isTimerRunning = true;
+        timerInterval = setInterval(updateTimer, 1000);
+      }
+
+      function stopTimer() {
+        if (!isTimerRunning) return;
+        
+        isTimerRunning = false;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+
+      // Load puzzle data
+      async function loadPuzzle() {
+        try {
+          // Use America/Chicago timezone
+          const today = new Date().toLocaleDateString('en-CA', {
+            timeZone: 'America/Chicago'
+          });
+          const response = await fetch(`./daily-puzzles/puzzle-${today}.json`);
+          
+          if (!response.ok) {
+            throw new Error('Puzzle not found');
+          }
+          
+          puzzleData = await response.json();
+          console.log('Puzzle loaded successfully:', puzzleData.date);
+          displayPuzzle();
+        } catch (error) {
+          console.error('Error loading puzzle:', error);
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('error').style.display = 'block';
+        }
+      }
+
+      function displayPuzzle() {
+        try {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('error').style.display = 'none';
+          document.getElementById('puzzleContent').style.display = 'block';
+          
+          // Set puzzle date
+          document.getElementById('puzzleDate').textContent = puzzleData.date;
+          
+          // Generate grid
+          generateGrid();
+          
+          // Display clues
+          displayClues();
+          
+          // Start timer
+          startTimer();
+          
+          // Select first available cell
+          setTimeout(() => {
+            const firstCell = document.querySelector('td:not([style*="background-color"])');
+            if (firstCell) {
+              const row = parseInt(firstCell.dataset.row);
+              const col = parseInt(firstCell.dataset.col);
+              selectCell(row, col);
+            }
+          }, 100);
+          
+          // Setup event listeners
+          setupEventListeners();
+          
+          console.log('Puzzle displayed successfully');
+        } catch (error) {
+          console.error('Error displaying puzzle:', error);
+          document.getElementById('error').style.display = 'block';
+        }
+      }
+
+      function generateGrid() {
+        const grid = puzzleData.grid;
+        const table = document.getElementById('puzzleGrid');
+        table.innerHTML = '';
+
+        for (let i = 0; i < grid.length; i++) {
+          const row = document.createElement('tr');
+          row.id = i;
+          
+          for (let j = 0; j < grid[i].length; j++) {
+            const cell = document.createElement('td');
+            const cellData = grid[i][j];
+            
+            if (cellData.isBlack) {
+              cell.style.backgroundColor = 'black';
+            } else {
+              cell.innerHTML = `
+                <div class="number">${cellData.number || ''}</div>
+                <div class="contents"></div>
+              `;
+              cell.tabIndex = 0; // Make cell focusable
+              cell.dataset.row = i;
+              cell.dataset.col = j;
+              cell.addEventListener('click', (e) => {
+                e.preventDefault();
+                selectCell(i, j);
+              });
+              cell.addEventListener('keydown', handleCellKeydown);
+            }
+            
+            row.appendChild(cell);
+          }
+          
+          table.appendChild(row);
+        }
+      }
+
+      function displayClues() {
+        // Display across clues
+        const acrossClues = document.getElementById('acrossClues');
+        acrossClues.innerHTML = '';
+        
+        puzzleData.clues.across.forEach(clue => {
+          const clueDiv = document.createElement('div');
+          clueDiv.className = 'clue-item';
+          clueDiv.innerHTML = `
+            <span class="clue-number">${clue.number}.</span>
+            <span class="clue-text">${clue.clue}</span>
+            <span class="clue-length">(${clue.length})</span>
+          `;
+          acrossClues.appendChild(clueDiv);
+        });
+
+        // Display down clues
+        const downClues = document.getElementById('downClues');
+        downClues.innerHTML = '';
+        
+        puzzleData.clues.down.forEach(clue => {
+          const clueDiv = document.createElement('div');
+          clueDiv.className = 'clue-item';
+          clueDiv.innerHTML = `
+            <span class="clue-number">${clue.number}.</span>
+            <span class="clue-text">${clue.clue}</span>
+            <span class="clue-length">(${clue.length})</span>
+          `;
+          downClues.appendChild(clueDiv);
+        });
+      }
+
+      function selectCell(row, col) {
+        // Remove focus from all cells
+        document.querySelectorAll('td').forEach(cell => {
+          cell.classList.remove('selected');
+        });
+        
+        const cell = document.querySelector(`tr[id="${row}"] td:nth-child(${col + 1})`);
+        if (cell && !cell.style.backgroundColor) {
+          cell.classList.add('selected');
+          cell.focus();
+        }
+      }
+
+      function handleCellKeydown(e) {
+        const cell = e.target;
+        const contents = cell.querySelector('.contents');
+        
+        if (e.key.match(/^[a-zA-Z]$/)) {
+          e.preventDefault();
+          contents.textContent = e.key.toUpperCase();
+          
+          // Move to next cell (across)
+          moveToNextCell(cell, 1);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          if (contents.textContent === '') {
+            // Move to previous cell and clear it
+            moveToNextCell(cell, -1);
+          } else {
+            contents.textContent = '';
+          }
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          moveToNextCell(cell, 1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          moveToNextCell(cell, -1);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          moveToCellBelow(cell);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          moveToCellAbove(cell);
+        }
+      }
+
+      function moveToNextCell(currentCell, direction) {
+        const currentRow = parseInt(currentCell.dataset.row);
+        const currentCol = parseInt(currentCell.dataset.col);
+        
+        let nextCol = currentCol + direction;
+        let nextRow = currentRow;
+        
+        // Handle wrapping to next/previous row
+        if (nextCol < 0) {
+          nextRow = Math.max(0, currentRow - 1);
+          nextCol = 4; // Last column
+        } else if (nextCol > 4) {
+          nextRow = Math.min(4, currentRow + 1);
+          nextCol = 0; // First column
+        }
+        
+        const nextCell = document.querySelector(`tr[id="${nextRow}"] td:nth-child(${nextCol + 1})`);
+        if (nextCell && !nextCell.style.backgroundColor) {
+          nextCell.focus();
+          selectCell(nextRow, nextCol);
+        }
+      }
+
+      function moveToCellBelow(currentCell) {
+        const currentRow = parseInt(currentCell.dataset.row);
+        const currentCol = parseInt(currentCell.dataset.col);
+        const nextRow = Math.min(4, currentRow + 1);
+        
+        const nextCell = document.querySelector(`tr[id="${nextRow}"] td:nth-child(${currentCol + 1})`);
+        if (nextCell && !nextCell.style.backgroundColor) {
+          nextCell.focus();
+          selectCell(nextRow, currentCol);
+        }
+      }
+
+      function moveToCellAbove(currentCell) {
+        const currentRow = parseInt(currentCell.dataset.row);
+        const currentCol = parseInt(currentCell.dataset.col);
+        const nextRow = Math.max(0, currentRow - 1);
+        
+        const nextCell = document.querySelector(`tr[id="${nextRow}"] td:nth-child(${currentCol + 1})`);
+        if (nextCell && !nextCell.style.backgroundColor) {
+          nextCell.focus();
+          selectCell(nextRow, currentCol);
+        }
+      }
+
+      function checkSolution() {
+        const grid = puzzleData.grid;
+        const solution = puzzleData.solution;
+        let correct = 0;
+        let total = 0;
+        let hasErrors = false;
+
+        for (let i = 0; i < grid.length; i++) {
+          for (let j = 0; j < grid[i].length; j++) {
+            if (!grid[i][j].isBlack) {
+              total++;
+              const cell = document.querySelector(`tr[id="${i}"] td:nth-child(${j + 1})`);
+              const userInput = cell.children[1].textContent.toUpperCase();
+              const correctAnswer = solution[i][j];
+              
+              if (userInput === correctAnswer) {
+                correct++;
+                cell.style.border = '2px solid green';
+              } else if (userInput !== '') {
+                cell.style.border = '2px solid red';
+                hasErrors = true;
+              }
+            }
+          }
+        }
+
+        const percentage = Math.round((correct / total) * 100);
+        alert(`Progress: ${correct}/${total} letters correct (${percentage}%)`);
+
+        if (correct === total) {
+          stopTimer();
+          document.getElementById('completionMessage').style.display = 'block';
+        }
+      }
+
+      function revealAnswers() {
+        const grid = puzzleData.grid;
+        const solution = puzzleData.solution;
+        
+        for (let i = 0; i < grid.length; i++) {
+          for (let j = 0; j < grid[i].length; j++) {
+            if (!grid[i][j].isBlack) {
+              const cell = document.querySelector(`tr[id="${i}"] td:nth-child(${j + 1})`);
+              cell.children[1].textContent = solution[i][j];
+              cell.style.border = '2px solid green';
+            }
+          }
+        }
+        
+        stopTimer();
+        document.getElementById('completionMessage').style.display = 'block';
+      }
+      
+      function revealSolution() {
+        if (confirm('Are you sure you want to reveal the entire puzzle? This will end the game.')) {
+          revealAnswers();
+          
+          // Disable all buttons
+          document.getElementById('hintBtn').disabled = true;
+          document.getElementById('checkBtn').disabled = true;
+          document.getElementById('revealBtn').disabled = true;
+        }
+      }
+
+      function clearGrid() {
+        const grid = puzzleData.grid;
+        
+        for (let i = 0; i < grid.length; i++) {
+          for (let j = 0; j < grid[i].length; j++) {
+            if (!grid[i][j].isBlack) {
+              const cell = document.querySelector(`tr[id="${i}"] td:nth-child(${j + 1})`);
+              cell.children[1].textContent = '';
+              cell.style.border = '1px solid black';
+            }
+          }
+        }
+      }
+
+      function updateHintCounter() {
+        document.getElementById('hintCount').textContent = hintCount;
+        const hintBtn = document.getElementById('hintBtn');
+        if (hintCount >= maxHints) {
+          hintBtn.disabled = true;
+          hintBtn.textContent = '💡 No Hints Left';
+        } else {
+          hintBtn.disabled = false;
+          hintBtn.textContent = `💡 Hint (${maxHints - hintCount} left)`;
+        }
+      }
+      
+      function setupEventListeners() {
+        document.getElementById('hintBtn').addEventListener('click', useHint);
+        document.getElementById('checkBtn').addEventListener('click', checkSolution);
+        document.getElementById('clearBtn').addEventListener('click', clearGrid);
+        document.getElementById('revealBtn').addEventListener('click', revealSolution);
+      }
+      
+      function useHint() {
+        if (hintCount >= maxHints) return;
+        
+        // Get all empty cells that aren't black
+        const emptyCells = [];
+        const grid = puzzleData.grid;
+        
+        for (let i = 0; i < grid.length; i++) {
+          for (let j = 0; j < grid[i].length; j++) {
+            const cell = document.querySelector(`tr[id="${i}"] td:nth-child(${j + 1})`);
+            const contents = cell.querySelector('.contents');
+            if (!grid[i][j].isBlack && contents.textContent === '') {
+              emptyCells.push({ row: i, col: j, cell: cell, contents: contents });
+            }
+          }
+        }
+        
+        if (emptyCells.length === 0) {
+          alert('All cells are already filled!');
+          return;
+        }
+        
+        // Pick a random empty cell
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        const solution = puzzleData.solution;
+        
+        // Fill in the correct letter
+        const correctLetter = solution[randomCell.row][randomCell.col];
+        randomCell.contents.textContent = correctLetter;
+        
+        // Add hint styling
+        randomCell.cell.classList.add('hint-revealed');
+        
+        // Increment hint counter
+        hintCount++;
+        updateHintCounter();
+        
+        // Show feedback
+        showHintFeedback(randomCell.row, randomCell.col, correctLetter);
+      }
+      
+      function showHintFeedback(row, col, letter) {
+        // Create a temporary feedback element
+        const feedback = document.createElement('div');
+        feedback.textContent = `Hint: ${letter} revealed at ${String.fromCharCode(65 + row)}${col + 1}`;
+        feedback.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #fff3e0;
+          color: #f57c00;
+          padding: 10px 15px;
+          border-radius: 6px;
+          border: 1px solid #ffb74d;
+          z-index: 1000;
+          font-size: 0.9rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+        
+        document.body.appendChild(feedback);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+          if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+          }
+        }, 3000);
+      }
+
+      // Load puzzle when page loads
+      document.addEventListener('DOMContentLoaded', loadPuzzle);
+    </script>
+  </body>
+</html>
