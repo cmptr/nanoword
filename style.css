@@ -188,13 +188,12 @@ td .number {
   position: absolute;
   top: 0;
   left: 0.3rem;
-  font-size: 32.805px;
+  font-size: 15px;
   height: 10px;
   z-index: 5;
   pointer-events: none;
   font-family: "Libre Franklin", sans-serif;
-  font-weight: 400;
-  color: #535353;
+  font-weight: 600;
 }
 
 td .input {
@@ -329,7 +328,7 @@ h3 {
   }
 
   td .number {
-    font-size: 27.3375px;
+    font-size: 12.5px;
   }
 }
 
@@ -452,7 +451,7 @@ h3 {
   }
 
   td .number {
-    font-size: 19.13625px;
+    font-size: 8.75px;
   }
 
   td .input {

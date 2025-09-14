@@ -139,11 +139,36 @@
       
       .puzzle-main {
         display: flex;
-        gap: 40px;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
         width: 100%;
         justify-content: center;
         margin-top: 20px;
+      }
+      
+      .word-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      
+      .clue-display {
+        text-align: center;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+      
+      .clue-text {
+        font-size: 1.4rem;
+        font-family: "Libre Franklin", sans-serif;
+        color: #535353;
+        line-height: 1.4;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #535353;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       }
       
       .puzzle-info {
@@ -386,27 +411,16 @@
           </div>
           
           <div class="puzzle-main">
-            <div class="table-container">
-              <table id="puzzleGrid">
-                <!-- Grid will be generated here -->
-              </table>
-            </div>
-            
-            <div class="puzzle-info">
-              <div class="clues-section">
-                <h3>Across</h3>
-                <div class="line-break"></div>
-                <div id="acrossClues">
-                  <!-- Across clues will be populated here -->
+            <div class="word-container">
+              <div class="clue-display">
+                <div class="clue-text" id="wordClue">
+                  <!-- Word clue will be populated here -->
                 </div>
               </div>
-              
-              <div class="clues-section">
-                <h3>Down</h3>
-                <div class="line-break"></div>
-                <div id="downClues">
-                  <!-- Down clues will be populated here -->
-                </div>
+              <div class="table-container">
+                <table id="puzzleGrid">
+                  <!-- Grid will be generated here -->
+                </table>
               </div>
             </div>
           </div>

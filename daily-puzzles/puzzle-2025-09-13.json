@@ -23,16 +23,7 @@
       {
         "row": 0,
         "col": 2,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
-      },
-      {
-        "row": 0,
-        "col": 3,
-        "contents": "F",
+        "contents": "B",
         "isBlack": false,
         "number": "4",
         "acrossNumber": "",
@@ -40,46 +31,46 @@
       },
       {
         "row": 0,
-        "col": 4,
+        "col": 3,
         "contents": "#",
         "isBlack": true,
         "number": "",
         "acrossNumber": "",
         "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 4,
+        "contents": "V",
+        "isBlack": false,
+        "number": "5",
+        "acrossNumber": "",
+        "downNumber": 5
       }
     ],
     [
       {
         "row": 1,
         "col": 0,
-        "contents": "W",
+        "contents": "D",
         "isBlack": false,
-        "number": "",
-        "acrossNumber": "",
+        "number": "1",
+        "acrossNumber": 1,
         "downNumber": 3
       },
       {
         "row": 1,
         "col": 1,
-        "contents": "#",
-        "isBlack": true,
+        "contents": "D",
+        "isBlack": false,
         "number": "",
-        "acrossNumber": "",
+        "acrossNumber": 1,
         "downNumber": ""
       },
       {
         "row": 1,
         "col": 2,
-        "contents": "P",
-        "isBlack": false,
-        "number": "5",
-        "acrossNumber": 1,
-        "downNumber": 5
-      },
-      {
-        "row": 1,
-        "col": 3,
-        "contents": "A",
+        "contents": "R",
         "isBlack": false,
         "number": "",
         "acrossNumber": 1,
@@ -87,19 +78,28 @@
       },
       {
         "row": 1,
+        "col": 3,
+        "contents": "#",
+        "isBlack": true,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": ""
+      },
+      {
+        "row": 1,
         "col": 4,
-        "contents": "S",
+        "contents": "A",
         "isBlack": false,
-        "number": "6",
-        "acrossNumber": 1,
-        "downNumber": 6
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 5
       }
     ],
     [
       {
         "row": 2,
         "col": 0,
-        "contents": "E",
+        "contents": "O",
         "isBlack": false,
         "number": "",
         "acrossNumber": "",
@@ -117,11 +117,11 @@
       {
         "row": 2,
         "col": 2,
-        "contents": "E",
+        "contents": "Y",
         "isBlack": false,
         "number": "",
         "acrossNumber": "",
-        "downNumber": 5
+        "downNumber": 4
       },
       {
         "row": 2,
@@ -134,88 +134,88 @@
       },
       {
         "row": 2,
+        "col": 4,
+        "contents": "U",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 5
+      }
+    ],
+    [
+      {
+        "row": 3,
+        "col": 0,
+        "contents": "R",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 3
+      },
+      {
+        "row": 3,
+        "col": 1,
+        "contents": "#",
+        "isBlack": true,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": ""
+      },
+      {
+        "row": 3,
+        "col": 2,
+        "contents": "A",
+        "isBlack": false,
+        "number": "2",
+        "acrossNumber": 2,
+        "downNumber": 4
+      },
+      {
+        "row": 3,
+        "col": 3,
+        "contents": "O",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 2,
+        "downNumber": ""
+      },
+      {
+        "row": 3,
         "col": 4,
         "contents": "N",
         "isBlack": false,
         "number": "",
-        "acrossNumber": "",
-        "downNumber": 6
+        "acrossNumber": 2,
+        "downNumber": 5
       }
     ],
     [
       {
-        "row": 3,
+        "row": 4,
         "col": 0,
-        "contents": "D",
-        "isBlack": false,
-        "number": "2",
-        "acrossNumber": 2,
-        "downNumber": 3
-      },
-      {
-        "row": 3,
-        "col": 1,
-        "contents": "U",
-        "isBlack": false,
-        "number": "7",
-        "acrossNumber": 2,
-        "downNumber": 7
-      },
-      {
-        "row": 3,
-        "col": 2,
         "contents": "E",
         "isBlack": false,
         "number": "",
-        "acrossNumber": 2,
-        "downNumber": 5
-      },
-      {
-        "row": 3,
-        "col": 3,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
         "acrossNumber": "",
-        "downNumber": ""
-      },
-      {
-        "row": 3,
-        "col": 4,
-        "contents": "U",
-        "isBlack": false,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": 6
-      }
-    ],
-    [
-      {
-        "row": 4,
-        "col": 0,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
+        "downNumber": 3
       },
       {
         "row": 4,
         "col": 1,
-        "contents": "H",
-        "isBlack": false,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": 7
-      },
-      {
-        "row": 4,
-        "col": 2,
         "contents": "#",
         "isBlack": true,
         "number": "",
         "acrossNumber": "",
         "downNumber": ""
+      },
+      {
+        "row": 4,
+        "col": 2,
+        "contents": "N",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 4
       },
       {
         "row": 4,
@@ -229,11 +229,11 @@
       {
         "row": 4,
         "col": 4,
-        "contents": "B",
+        "contents": "T",
         "isBlack": false,
         "number": "",
         "acrossNumber": "",
-        "downNumber": 6
+        "downNumber": 5
       }
     ]
   ],
@@ -242,40 +242,40 @@
       {
         "number": 1,
         "length": 3,
-        "clue": "(now rare) The right of going foremost; precedence. ",
-        "answer": "PAS",
+        "clue": "(computing) Double-data-rate computer RAM. ",
+        "answer": "DDR",
         "positions": [
           {
             "row": 1,
+            "col": 0
+          },
+          {
+            "row": 1,
+            "col": 1
+          },
+          {
+            "row": 1,
             "col": 2
-          },
-          {
-            "row": 1,
-            "col": 3
-          },
-          {
-            "row": 1,
-            "col": 4
           }
         ]
       },
       {
         "number": 2,
         "length": 3,
-        "clue": "Owed or owing. ",
-        "answer": "DUE",
+        "clue": "(finance) Initialism of all-or-none order. ",
+        "answer": "AON",
         "positions": [
           {
             "row": 3,
-            "col": 0
-          },
-          {
-            "row": 3,
-            "col": 1
-          },
-          {
-            "row": 3,
             "col": 2
+          },
+          {
+            "row": 3,
+            "col": 3
+          },
+          {
+            "row": 3,
+            "col": 4
           }
         ]
       }
@@ -283,9 +283,9 @@
     "down": [
       {
         "number": 3,
-        "length": 4,
-        "clue": "Filled with awe. ",
-        "answer": "AWED",
+        "length": 5,
+        "clue": "To worship. ",
+        "answer": "ADORE",
         "positions": [
           {
             "row": 0,
@@ -301,52 +301,52 @@
           },
           {
             "row": 3,
+            "col": 0
+          },
+          {
+            "row": 4,
             "col": 0
           }
         ]
       },
       {
         "number": 4,
-        "length": 2,
-        "clue": "(music) A syllable used in solfège to represent the fourth diatonic (or sixth chromatic) note of a major scale. ",
-        "answer": "FA",
+        "length": 5,
+        "clue": "A male given name from Irish, a less common alternative spelling of Brian. ",
+        "answer": "BRYAN",
         "positions": [
           {
             "row": 0,
-            "col": 3
+            "col": 2
           },
           {
             "row": 1,
-            "col": 3
+            "col": 2
+          },
+          {
+            "row": 2,
+            "col": 2
+          },
+          {
+            "row": 3,
+            "col": 2
+          },
+          {
+            "row": 4,
+            "col": 2
           }
         ]
       },
       {
         "number": 5,
-        "length": 3,
-        "clue": "(informal, chiefly Canada, US, Australia) Urine. ",
-        "answer": "PEE",
+        "length": 5,
+        "clue": "(intransitive) To speak boastfully. ",
+        "answer": "VAUNT",
         "positions": [
           {
-            "row": 1,
-            "col": 2
+            "row": 0,
+            "col": 4
           },
-          {
-            "row": 2,
-            "col": 2
-          },
-          {
-            "row": 3,
-            "col": 2
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "length": 4,
-        "clue": "Conspicuously short. ",
-        "answer": "SNUB",
-        "positions": [
           {
             "row": 1,
             "col": 4
@@ -362,22 +362,6 @@
           {
             "row": 4,
             "col": 4
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "length": 2,
-        "clue": "An occurrence of the interjection \"uh\". ",
-        "answer": "UH",
-        "positions": [
-          {
-            "row": 3,
-            "col": 1
-          },
-          {
-            "row": 4,
-            "col": 1
           }
         ]
       }
@@ -387,84 +371,72 @@
     [
       "A",
       "#",
+      "B",
       "#",
-      "F",
-      "#"
-    ],
-    [
-      "W",
-      "#",
-      "P",
-      "A",
-      "S"
-    ],
-    [
-      "E",
-      "#",
-      "E",
-      "#",
-      "N"
+      "V"
     ],
     [
       "D",
-      "U",
-      "E",
+      "D",
+      "R",
+      "#",
+      "A"
+    ],
+    [
+      "O",
+      "#",
+      "Y",
       "#",
       "U"
     ],
     [
+      "R",
       "#",
-      "H",
+      "A",
+      "O",
+      "N"
+    ],
+    [
+      "E",
       "#",
+      "N",
       "#",
-      "B"
+      "T"
     ]
   ],
   "clues": {
     "across": [
       {
         "number": 1,
-        "clue": "(now rare) The right of going foremost; precedence. ",
+        "clue": "(computing) Double-data-rate computer RAM. ",
         "length": 3,
-        "answer": "PAS"
+        "answer": "DDR"
       },
       {
         "number": 2,
-        "clue": "Owed or owing. ",
+        "clue": "(finance) Initialism of all-or-none order. ",
         "length": 3,
-        "answer": "DUE"
+        "answer": "AON"
       }
     ],
     "down": [
       {
         "number": 3,
-        "clue": "Filled with awe. ",
-        "length": 4,
-        "answer": "AWED"
+        "clue": "To worship. ",
+        "length": 5,
+        "answer": "ADORE"
       },
       {
         "number": 4,
-        "clue": "(music) A syllable used in solfège to represent the fourth diatonic (or sixth chromatic) note of a major scale. ",
-        "length": 2,
-        "answer": "FA"
+        "clue": "A male given name from Irish, a less common alternative spelling of Brian. ",
+        "length": 5,
+        "answer": "BRYAN"
       },
       {
         "number": 5,
-        "clue": "(informal, chiefly Canada, US, Australia) Urine. ",
-        "length": 3,
-        "answer": "PEE"
-      },
-      {
-        "number": 6,
-        "clue": "Conspicuously short. ",
-        "length": 4,
-        "answer": "SNUB"
-      },
-      {
-        "number": 7,
-        "clue": "An occurrence of the interjection \"uh\". ",
-        "length": 2,
-        "answer": "UH"
+        "clue": "(intransitive) To speak boastfully. ",
+        "length": 5,
+        "answer": "VAUNT"
       }
     ]
   }

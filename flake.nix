@@ -30,6 +30,16 @@
             demo = "node example-usage.js";
             dev = "node index.js";
             "dev-refactored" = "node refactoredIndex.js";
+            serve = "node serve-daily.js";
+            deploy = "wrangler deploy";
+            "dev-worker" = "wrangler dev";
+            "kv:create" = "wrangler kv:namespace create PUZZLES";
+            "kv:list" = "wrangler kv:key list --namespace-id=PUZZLES";
+            "kv:populate" = "node scripts/populate-kv.js populate";
+            "kv:list-contents" = "node scripts/populate-kv.js list";
+            "test:worker" = "node scripts/test-worker.js";
+            "deploy:full" = "./scripts/deploy.sh";
+            "deploy-daily" = "node scripts/deploy-daily.js";
           };
           keywords = [ "crossword" "puzzle" "daily" "cli" ];
           author = "";
@@ -38,6 +48,9 @@
             "node-fetch" = "^3.3.0";
             "chalk" = "^4.1.2";
             "readline-sync" = "^1.4.10";
+          };
+          devDependencies = {
+            "wrangler" = "^4.0.0";
           };
           engines = {
             node = ">=14.0.0";
@@ -53,6 +66,8 @@
             nodejs
             nodePackages.npm
             nodePackages.node2nix
+            # Cloudflare Workers tools
+            nodePackages.wrangler
             # Additional development tools
             git
             curl
@@ -72,7 +87,15 @@
             echo "  npm run generate      - Generate daily puzzle"
             echo "  npm run solve         - Solve daily puzzle"
             echo "  npm run demo          - Run demo"
+            echo "  npm run serve         - Serve daily puzzle web app"
             echo "  npm install           - Install dependencies"
+            echo ""
+            echo "Cloudflare Workers commands:"
+            echo "  npm run dev-worker    - Start local Cloudflare Worker dev server"
+            echo "  npm run deploy        - Deploy to Cloudflare Workers"
+            echo "  npm run kv:create     - Create KV namespace"
+            echo "  npm run kv:populate   - Upload puzzles to KV"
+            echo "  npm run test:worker   - Test worker functionality"
             echo ""
             echo "Web server commands:"
             echo "  python3 -m http.server 8000  - Serve web version"

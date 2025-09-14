@@ -1,5 +1,5 @@
 {
-  "name": "nanowords-daily",
+  "name": "nanoword",
   "version": "1.0.0",
   "description": "Daily crossword puzzle generator CLI",
   "main": "daily-puzzle.js",
@@ -15,7 +15,18 @@
     "serve": "node serve-daily.js",
     "demo": "node example-usage.js",
     "dev": "node index.js",
-    "dev-refactored": "node refactoredIndex.js"
+    "dev-refactored": "node refactoredIndex.js",
+    "deploy": "wrangler deploy",
+    "dev-worker": "wrangler dev",
+    "kv:create": "wrangler kv namespace create PUZZLES",
+    "kv:list": "wrangler kv key list --namespace-id=0a6922f1a0a44521bc48c23e69322b4f",
+    "kv:populate": "node scripts/populate-kv.js populate",
+    "kv:list-contents": "node scripts/populate-kv.js list",
+    "kv:setup": "node scripts/setup-kv.js create",
+    "kv:list-namespaces": "node scripts/setup-kv.js list",
+    "test:worker": "node scripts/test-worker.js",
+    "deploy:full": "./scripts/deploy.sh",
+    "deploy-daily": "node scripts/deploy-daily.js"
   },
   "keywords": ["crossword", "puzzle", "daily", "cli"],
   "author": "",
@@ -24,6 +35,9 @@
     "node-fetch": "^2.7.0",
     "chalk": "^4.1.2",
     "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
   },
   "engines": {
     "node": ">=14.0.0"

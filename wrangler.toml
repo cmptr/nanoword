@@ -1,0 +1,11 @@
+name = "nanoword"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "nanoword"
+
+[[kv_namespaces]]
+binding = "PUZZLES"
+id = "0a6922f1a0a44521bc48c23e69322b4f"
+preview_id = "dd07a3577c3d42b7a491f11e0072cf8b"

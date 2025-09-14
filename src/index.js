@@ -67,132 +67,49 @@ async function generateDailyPuzzle(dateString) {
     { word: "ILLO", clue: "(informal) An illustration." },
     { word: "DOL", clue: "(medicine) The unit of measurement for pain." },
     { word: "SHELL", clue: "A hard external covering of an animal." },
-    { word: "NAO", clue: "(nautical, historical, rare) A Spanish or Portuguese carrack." }
+    { word: "NAO", clue: "(nautical, historical, rare) A Spanish or Portuguese carrack." },
+    { word: "QUIZ", clue: "A test of knowledge, especially as a competition between individuals or teams." },
+    { word: "JAZZ", clue: "A type of music of black American origin characterized by improvisation, syncopation, and usually a regular or forceful rhythm." },
+    { word: "PUZZLE", clue: "A game, toy, or problem designed to test ingenuity or knowledge." }
   ];
   
-  // Simple 5x5 grid with the words arranged
+  // Pick a random word (up to 8 letters)
+  const selectedWord = words[Math.floor(Math.random() * words.length)];
+  const wordLength = selectedWord.word.length;
+  
+  // Create a single row grid for the word
   const grid = [
-    [
-      { row: 0, col: 0, contents: "", isBlack: false, number: "3", acrossNumber: 1, downNumber: 3 },
-      { row: 0, col: 1, contents: "", isBlack: false, number: "", acrossNumber: 1, downNumber: "" },
-      { row: 0, col: 2, contents: "", isBlack: false, number: "4", acrossNumber: 1, downNumber: 4 },
-      { row: 0, col: 3, contents: "", isBlack: false, number: "", acrossNumber: 1, downNumber: "" },
-      { row: 0, col: 4, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" }
-    ],
-    [
-      { row: 1, col: 0, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 3 },
-      { row: 1, col: 1, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 1, col: 2, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 4 },
-      { row: 1, col: 3, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 1, col: 4, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" }
-    ],
-    [
-      { row: 2, col: 0, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 3 },
-      { row: 2, col: 1, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 2, col: 2, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 4 },
-      { row: 2, col: 3, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 2, col: 4, contents: "", isBlack: false, number: "5", acrossNumber: "", downNumber: 5 }
-    ],
-    [
-      { row: 3, col: 0, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 3, col: 1, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 3, col: 2, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 4 },
-      { row: 3, col: 3, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 3, col: 4, contents: "", isBlack: false, number: "", acrossNumber: "", downNumber: 5 }
-    ],
-    [
-      { row: 4, col: 0, contents: "#", isBlack: true, number: "", acrossNumber: "", downNumber: "" },
-      { row: 4, col: 1, contents: "", isBlack: false, number: "2", acrossNumber: 2, downNumber: "" },
-      { row: 4, col: 2, contents: "", isBlack: false, number: "", acrossNumber: 2, downNumber: 4 },
-      { row: 4, col: 3, contents: "", isBlack: false, number: "", acrossNumber: 2, downNumber: "" },
-      { row: 4, col: 4, contents: "", isBlack: false, number: "", acrossNumber: 2, downNumber: 5 }
-    ]
+    Array.from({ length: wordLength }, (_, col) => ({
+      row: 0,
+      col: col,
+      contents: "",
+      isBlack: false,
+      number: col === 0 ? "1" : "",
+      acrossNumber: 1,
+      downNumber: ""
+    }))
   ];
   
-  const solution = [
-    ["D", "U", "S", "K", "#"],
-    ["O", "#", "H", "#", "#"],
-    ["L", "#", "E", "#", "N"],
-    ["#", "#", "L", "#", "A"],
-    ["#", "I", "L", "L", "O"]
-  ];
+  const solution = [selectedWord.word.split('')];
   
   const clues = {
     across: [
-      { number: 1, clue: words[0].clue, length: 4, answer: words[0].word },
-      { number: 2, clue: words[1].clue, length: 4, answer: words[1].word }
+      { number: 1, clue: selectedWord.clue, length: wordLength, answer: selectedWord.word }
     ],
-    down: [
-      { number: 3, clue: words[2].clue, length: 3, answer: words[2].word },
-      { number: 4, clue: words[3].clue, length: 5, answer: words[3].word },
-      { number: 5, clue: words[4].clue, length: 3, answer: words[4].word }
-    ]
+    down: []
   };
   
   const wordsData = {
     across: [
       {
         number: 1,
-        length: 4,
-        clue: words[0].clue,
-        answer: words[0].word,
-        positions: [
-          { row: 0, col: 0 },
-          { row: 0, col: 1 },
-          { row: 0, col: 2 },
-          { row: 0, col: 3 }
-        ]
-      },
-      {
-        number: 2,
-        length: 4,
-        clue: words[1].clue,
-        answer: words[1].word,
-        positions: [
-          { row: 4, col: 1 },
-          { row: 4, col: 2 },
-          { row: 4, col: 3 },
-          { row: 4, col: 4 }
-        ]
+        length: wordLength,
+        clue: selectedWord.clue,
+        answer: selectedWord.word,
+        positions: Array.from({ length: wordLength }, (_, col) => ({ row: 0, col: col }))
       }
     ],
-    down: [
-      {
-        number: 3,
-        length: 3,
-        clue: words[2].clue,
-        answer: words[2].word,
-        positions: [
-          { row: 0, col: 0 },
-          { row: 1, col: 0 },
-          { row: 2, col: 0 }
-        ]
-      },
-      {
-        number: 4,
-        length: 5,
-        clue: words[3].clue,
-        answer: words[3].word,
-        positions: [
-          { row: 0, col: 2 },
-          { row: 1, col: 2 },
-          { row: 2, col: 2 },
-          { row: 3, col: 2 },
-          { row: 4, col: 2 }
-        ]
-      },
-      {
-        number: 5,
-        length: 3,
-        clue: words[4].clue,
-        answer: words[4].word,
-        positions: [
-          { row: 2, col: 4 },
-          { row: 3, col: 4 },
-          { row: 4, col: 4 }
-        ]
-      }
-    ]
+    down: []
   };
   
   return {
@@ -257,8 +174,8 @@ function generateHTML(puzzleData) {
         gap: 20px;
         margin: 20px 0;
         padding: 15px 0;
-        border-top: 1px solid black;
-        border-bottom: 1px solid black;
+        border-top: 1px solid #535353;
+        border-bottom: 1px solid #535353;
         background: transparent;
         box-shadow: none;
         width: 100%;
@@ -344,11 +261,34 @@ function generateHTML(puzzleData) {
       
       .puzzle-main {
         display: flex;
-        gap: 40px;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
         width: 100%;
         justify-content: center;
         margin-top: 20px;
+      }
+      
+      .word-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      
+      .clue-display {
+        text-align: center;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+      
+      .clue-text {
+        font-size: 1.4rem;
+        font-family: "Libre Franklin", sans-serif;
+        color: #535353;
+        line-height: 1.4;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
       }
       
       .table-container {
@@ -358,26 +298,33 @@ function generateHTML(puzzleData) {
       }
       
       table {
-        border: 4px solid #535353;
+        border: 4px solid #535353 !important;
         background-color: #535353;
         text-align: center;
         cursor: pointer;
-        width: 600px;
-        height: 600px;
-        min-width: 600px;
-        min-height: 600px;
-        margin-right: 60px;
-        margin-left: 60px;
+        width: auto;
+        height: auto;
+        min-width: auto;
+        min-height: auto;
+        margin: 0 auto;
+      }
+      
+      table#puzzleGrid {
+        border: 4px solid #535353 !important;
       }
       
       td {
         height: 50px;
         width: 50px;
-        border: 1px solid #535353;
+        border: 1px solid #535353 !important;
         background-color: white;
         padding: 0px;
         display: table-cell;
         position: relative;
+      }
+      
+      table#puzzleGrid td {
+        border: 1px solid #535353 !important;
       }
       
       td .contents {
@@ -395,12 +342,13 @@ function generateHTML(puzzleData) {
         position: absolute;
         top: 0;
         left: 0.3rem;
-        font-size: 42px;
+        font-size: 32.805px;
         height: 10px;
         z-index: 5;
         pointer-events: none;
         font-family: "Libre Franklin", sans-serif;
-        font-weight: 600;
+        font-weight: 400;
+        color: #535353;
       }
       
       .puzzle-info {
@@ -427,15 +375,15 @@ function generateHTML(puzzleData) {
         font-weight: bold;
         margin-bottom: 1rem;
         font-family: "Libre Franklin", sans-serif;
-        color: black;
-        border-bottom: 2px solid black;
+        color: #535353;
+        border-bottom: 2px solid #535353;
         padding-bottom: 5px;
       }
       
       .line-break {
         width: 100%;
         height: 0.2rem;
-        background-color: black;
+        background-color: #535353;
         margin-bottom: 1rem;
       }
       
@@ -448,16 +396,16 @@ function generateHTML(puzzleData) {
       
       .clue-number {
         font-weight: bold;
-        color: black;
+        color: #535353;
         margin-right: 8px;
       }
       
       .clue-text {
-        color: black;
+        color: #535353;
       }
       
       .clue-length {
-        color: black;
+        color: #535353;
         font-size: 0.9rem;
         margin-left: 8px;
       }
@@ -479,6 +427,13 @@ function generateHTML(puzzleData) {
         padding: 1px 3px;
       }
       
+      .title-word {
+        color: #535353;
+        font-family: "Libre Franklin", sans-serif;
+        font-weight: 700;
+        font-size: 6rem;
+      }
+      
       .pronunciation {
         font-size: 1.2rem;
         font-style: italic;
@@ -491,7 +446,7 @@ function generateHTML(puzzleData) {
       .text-button {
         background: none !important;
         border: none !important;
-        color: black;
+        color: #535353;
         font-size: 1.5rem;
         font-weight: 700;
         cursor: pointer;
@@ -596,7 +551,7 @@ function generateHTML(puzzleData) {
         }
         
         td .number {
-          font-size: 36px;
+          font-size: 27.3375px;
         }
       }
       
@@ -649,7 +604,7 @@ function generateHTML(puzzleData) {
         }
         
         td .number {
-          font-size: 24px;
+          font-size: 19.13625px;
         }
         
         td .contents {
@@ -687,7 +642,7 @@ function generateHTML(puzzleData) {
         <h1>
           <span class="title-word">nanoword</span>
         </h1>
-        <div class="pronunciation">/næn.oʊ-/</div>
+        <div class="pronunciation">/næn.oʊ-wɜː(r)d/</div>
         <div class="puzzle-date" id="puzzleDate">${puzzleData.date}</div>
       </div>
 
@@ -711,27 +666,16 @@ function generateHTML(puzzleData) {
           </div>
           
           <div class="puzzle-main">
-            <div class="table-container">
-              <table id="puzzleGrid">
-                <!-- Grid will be generated here -->
-              </table>
-            </div>
-            
-            <div class="puzzle-info">
-              <div class="clues-section">
-                <h3>Across</h3>
-                <div class="line-break"></div>
-                <div id="acrossClues">
-                  <!-- Across clues will be populated here -->
+            <div class="word-container">
+              <div class="clue-display">
+                <div class="clue-text" id="wordClue">
+                  <!-- Word clue will be populated here -->
                 </div>
               </div>
-              
-              <div class="clues-section">
-                <h3>Down</h3>
-                <div class="line-break"></div>
-                <div id="downClues">
-                  <!-- Down clues will be populated here -->
-                </div>
+              <div class="table-container">
+                <table id="puzzleGrid">
+                  <!-- Grid will be generated here -->
+                </table>
               </div>
             </div>
           </div>
@@ -851,35 +795,10 @@ function generateHTML(puzzleData) {
       }
 
       function displayClues() {
-        // Display across clues
-        const acrossClues = document.getElementById('acrossClues');
-        acrossClues.innerHTML = '';
-        
-        puzzleData.clues.across.forEach(clue => {
-          const clueDiv = document.createElement('div');
-          clueDiv.className = 'clue-item';
-          clueDiv.innerHTML = \`
-            <span class="clue-number">\${clue.number}.</span>
-            <span class="clue-text">\${clue.clue}</span>
-            <span class="clue-length">(\${clue.length})</span>
-          \`;
-          acrossClues.appendChild(clueDiv);
-        });
-
-        // Display down clues
-        const downClues = document.getElementById('downClues');
-        downClues.innerHTML = '';
-        
-        puzzleData.clues.down.forEach(clue => {
-          const clueDiv = document.createElement('div');
-          clueDiv.className = 'clue-item';
-          clueDiv.innerHTML = \`
-            <span class="clue-number">\${clue.number}.</span>
-            <span class="clue-text">\${clue.clue}</span>
-            <span class="clue-length">(\${clue.length})</span>
-          \`;
-          downClues.appendChild(clueDiv);
-        });
+        // Display the single word clue
+        const wordClue = document.getElementById('wordClue');
+        const clue = puzzleData.clues.across[0]; // Get the single clue
+        wordClue.textContent = \`\${clue.number}. \${clue.clue} (\${clue.length} letters)\`;
       }
 
       function selectCell(row, col) {
@@ -935,13 +854,12 @@ function generateHTML(puzzleData) {
         let nextCol = currentCol + direction;
         let nextRow = currentRow;
         
-        // Handle wrapping to next/previous row
+        // Handle wrapping within the single row
+        const maxCol = puzzleData.grid[0].length - 1;
         if (nextCol < 0) {
-          nextRow = Math.max(0, currentRow - 1);
-          nextCol = 4; // Last column
-        } else if (nextCol > 4) {
-          nextRow = Math.min(4, currentRow + 1);
-          nextCol = 0; // First column
+          nextCol = maxCol; // Wrap to last column
+        } else if (nextCol > maxCol) {
+          nextCol = 0; // Wrap to first column
         }
         
         const nextCell = document.querySelector(\`tr[id="\${nextRow}"] td:nth-child(\${nextCol + 1})\`);
@@ -952,27 +870,13 @@ function generateHTML(puzzleData) {
       }
 
       function moveToCellBelow(currentCell) {
-        const currentRow = parseInt(currentCell.dataset.row);
-        const currentCol = parseInt(currentCell.dataset.col);
-        const nextRow = Math.min(4, currentRow + 1);
-        
-        const nextCell = document.querySelector(\`tr[id="\${nextRow}"] td:nth-child(\${currentCol + 1})\`);
-        if (nextCell && !nextCell.style.backgroundColor) {
-          nextCell.focus();
-          selectCell(nextRow, currentCol);
-        }
+        // For single row, just move to next cell
+        moveToNextCell(currentCell, 1);
       }
 
       function moveToCellAbove(currentCell) {
-        const currentRow = parseInt(currentCell.dataset.row);
-        const currentCol = parseInt(currentCell.dataset.col);
-        const nextRow = Math.max(0, currentRow - 1);
-        
-        const nextCell = document.querySelector(\`tr[id="\${nextRow}"] td:nth-child(\${currentCol + 1})\`);
-        if (nextCell && !nextCell.style.backgroundColor) {
-          nextCell.focus();
-          selectCell(nextRow, currentCol);
-        }
+        // For single row, just move to previous cell
+        moveToNextCell(currentCell, -1);
       }
 
       function checkSolution() {
@@ -982,21 +886,20 @@ function generateHTML(puzzleData) {
         let total = 0;
         let hasErrors = false;
 
-        for (let i = 0; i < grid.length; i++) {
-          for (let j = 0; j < grid[i].length; j++) {
-            if (!grid[i][j].isBlack) {
-              total++;
-              const cell = document.querySelector(\`tr[id="\${i}"] td:nth-child(\${j + 1})\`);
-              const userInput = cell.children[1].textContent.toUpperCase();
-              const correctAnswer = solution[i][j];
-              
-              if (userInput === correctAnswer) {
-                correct++;
-                cell.style.border = '2px solid green';
-              } else if (userInput !== '') {
-                cell.style.border = '2px solid red';
-                hasErrors = true;
-              }
+        // Check only the single row
+        for (let j = 0; j < grid[0].length; j++) {
+          if (!grid[0][j].isBlack) {
+            total++;
+            const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
+            const userInput = cell.children[1].textContent.toUpperCase();
+            const correctAnswer = solution[0][j];
+            
+            if (userInput === correctAnswer) {
+              correct++;
+              cell.style.border = '2px solid green';
+            } else if (userInput !== '') {
+              cell.style.border = '2px solid red';
+              hasErrors = true;
             }
           }
         }
@@ -1014,13 +917,12 @@ function generateHTML(puzzleData) {
         const grid = puzzleData.grid;
         const solution = puzzleData.solution;
         
-        for (let i = 0; i < grid.length; i++) {
-          for (let j = 0; j < grid[i].length; j++) {
-            if (!grid[i][j].isBlack) {
-              const cell = document.querySelector(\`tr[id="\${i}"] td:nth-child(\${j + 1})\`);
-              cell.children[1].textContent = solution[i][j];
-              cell.style.border = '2px solid green';
-            }
+        // Reveal only the single row
+        for (let j = 0; j < grid[0].length; j++) {
+          if (!grid[0][j].isBlack) {
+            const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
+            cell.children[1].textContent = solution[0][j];
+            cell.style.border = '2px solid green';
           }
         }
         
@@ -1042,13 +944,12 @@ function generateHTML(puzzleData) {
       function clearGrid() {
         const grid = puzzleData.grid;
         
-        for (let i = 0; i < grid.length; i++) {
-          for (let j = 0; j < grid[i].length; j++) {
-            if (!grid[i][j].isBlack) {
-              const cell = document.querySelector(\`tr[id="\${i}"] td:nth-child(\${j + 1})\`);
-              cell.children[1].textContent = '';
-              cell.style.border = '1px solid black';
-            }
+        // Clear only the single row
+        for (let j = 0; j < grid[0].length; j++) {
+          if (!grid[0][j].isBlack) {
+            const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
+            cell.children[1].textContent = '';
+            cell.style.border = '1px solid #535353';
           }
         }
       }
@@ -1075,17 +976,15 @@ function generateHTML(puzzleData) {
       function useHint() {
         if (hintCount >= maxHints) return;
         
-        // Get all empty cells that aren't black
+        // Get all empty cells that aren't black in the single row
         const emptyCells = [];
         const grid = puzzleData.grid;
         
-        for (let i = 0; i < grid.length; i++) {
-          for (let j = 0; j < grid[i].length; j++) {
-            const cell = document.querySelector(\`tr[id="\${i}"] td:nth-child(\${j + 1})\`);
-            const contents = cell.querySelector('.contents');
-            if (!grid[i][j].isBlack && contents.textContent === '') {
-              emptyCells.push({ row: i, col: j, cell: cell, contents: contents });
-            }
+        for (let j = 0; j < grid[0].length; j++) {
+          const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
+          const contents = cell.querySelector('.contents');
+          if (!grid[0][j].isBlack && contents.textContent === '') {
+            emptyCells.push({ row: 0, col: j, cell: cell, contents: contents });
           }
         }
         
@@ -1099,7 +998,7 @@ function generateHTML(puzzleData) {
         const solution = puzzleData.solution;
         
         // Fill in the correct letter
-        const correctLetter = solution[randomCell.row][randomCell.col];
+        const correctLetter = solution[0][randomCell.col];
         randomCell.contents.textContent = correctLetter;
         
         // Add hint styling
@@ -1116,7 +1015,7 @@ function generateHTML(puzzleData) {
       function showHintFeedback(row, col, letter) {
         // Create a temporary feedback element
         const feedback = document.createElement('div');
-        feedback.textContent = \`Hint: \${letter} revealed at \${String.fromCharCode(65 + row)}\${col + 1}\`;
+        feedback.textContent = \`Hint: \${letter} revealed at position \${col + 1}\`;
         feedback.style.cssText = \`
           position: fixed;
           top: 20px;
