@@ -651,10 +651,11 @@ function generateHTML(puzzleData) {
       
       .message h2 {
         font-family: "Libre Franklin", sans-serif;
-        font-size: 1.8rem;
-        font-weight: 600;
+        font-size: 2.1rem;
+        font-weight: normal;
         color: #535353;
         margin: 0;
+        line-height: 1.4;
       }
       
       /* Override any potential Tailwind or browser defaults */
@@ -955,7 +956,7 @@ function generateHTML(puzzleData) {
       </div>
 
       <div class="message" id="completionMessage" style="display: none;">
-        <h2>🎉 Congratulations! You've completed today's nanoword puzzle!</h2>
+        <h2 id="completionText">Success!</h2>
       </div>
     </div>
 
@@ -987,7 +988,8 @@ function generateHTML(puzzleData) {
           hintCount: hintCount,
           elapsedTime: currentElapsedTime,
           wasTimerRunning: isTimerRunning,
-          isCompleted: document.getElementById('completionMessage').style.display === 'block'
+          isCompleted: document.getElementById('completionMessage').style.display === 'block',
+          completionText: document.getElementById('completionText').textContent
         };
 
         // Save cell values
@@ -1039,6 +1041,9 @@ function generateHTML(puzzleData) {
           // Restore completion state
           if (progress.isCompleted) {
             document.getElementById('completionMessage').style.display = 'block';
+            if (progress.completionText) {
+              document.getElementById('completionText').textContent = progress.completionText;
+            }
             disablePuzzleInputs();
             // Don't start timer if puzzle is completed
             isTimerRunning = false;
@@ -1355,6 +1360,14 @@ function generateHTML(puzzleData) {
 
         if (correct === total) {
           stopTimer();
+          
+          // Set completion message with time and hints
+          const finalTime = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+          const timeText = formatTime(finalTime);
+          const hintText = hintCount === 0 ? 'no hints' : hintCount === 1 ? '1 hint' : \`\${hintCount} hints\`;
+          const completionText = \`Success! Completed in \${timeText}, used \${hintText}.\`;
+          document.getElementById('completionText').textContent = completionText;
+          
           document.getElementById('completionMessage').style.display = 'block';
           disablePuzzleInputs();
           // Save completion state
@@ -1377,6 +1390,14 @@ function generateHTML(puzzleData) {
         }
         
         stopTimer();
+        
+        // Set completion message for revealed puzzle
+        const finalTime = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+        const timeText = formatTime(finalTime);
+        const hintText = hintCount === 0 ? 'no hints' : hintCount === 1 ? '1 hint' : \`\${hintCount} hints\`;
+        const completionText = \`Puzzle revealed after \${timeText}, used \${hintText}.\`;
+        document.getElementById('completionText').textContent = completionText;
+        
         document.getElementById('completionMessage').style.display = 'block';
         disablePuzzleInputs();
         
