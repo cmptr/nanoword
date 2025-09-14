@@ -247,7 +247,7 @@ function generateHTML(puzzleData) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Micro+5&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <title>nanoword</title>
     <style>
       .daily-container {
@@ -352,7 +352,7 @@ function generateHTML(puzzleData) {
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         font-weight: 600;
         text-transform: uppercase;
         transition: all 0.3s ease;
@@ -413,7 +413,7 @@ function generateHTML(puzzleData) {
       
       .clue-text {
         font-size: 2.1rem;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Libre Baskerville", serif;
         color: #535353;
         line-height: 1.4;
         padding: 20px;
@@ -473,7 +473,7 @@ function generateHTML(puzzleData) {
         height: 100%;
         border: none;
         background: transparent;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -489,7 +489,7 @@ function generateHTML(puzzleData) {
         height: 100%;
         border: none;
         background: transparent;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         outline: none;
         caret-color: #1976d2;
         text-transform: uppercase;
@@ -518,7 +518,7 @@ function generateHTML(puzzleData) {
         height: 10px;
         z-index: 5;
         pointer-events: none;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         font-weight: 400;
         color: #535353;
       }
@@ -546,7 +546,7 @@ function generateHTML(puzzleData) {
         font-size: 1.9rem;
         font-weight: bold;
         margin-bottom: 1rem;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         color: #535353;
         border-bottom: 2px solid #535353;
         padding-bottom: 5px;
@@ -563,7 +563,7 @@ function generateHTML(puzzleData) {
         margin-top: 1rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
       }
       
       .clue-number {
@@ -602,7 +602,7 @@ function generateHTML(puzzleData) {
       
       .title-word {
         color: #535353;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Tiny5", monospace;
         font-weight: 700;
         font-size: 4rem;
         line-height: 1.1;
@@ -628,7 +628,7 @@ function generateHTML(puzzleData) {
         cursor: pointer;
         padding: 8px 12px;
         text-decoration: none;
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Libre Baskerville", serif;
         box-shadow: none !important;
         text-shadow: none !important;
         filter: none !important;
@@ -659,7 +659,7 @@ function generateHTML(puzzleData) {
       }
       
       .message h2 {
-        font-family: "Libre Franklin", sans-serif;
+        font-family: "Micro 5", monospace;
         font-size: 2.1rem;
         font-weight: normal;
         color: #535353;
@@ -677,7 +677,7 @@ function generateHTML(puzzleData) {
         background: none !important;
         border: none !important;
         outline: none !important;
-        font-family: "Libre Franklin", sans-serif !important;
+        font-family: "Libre Baskerville", serif !important;
         font-weight: 700 !important;
       }
       
@@ -982,6 +982,7 @@ function generateHTML(puzzleData) {
       let isTimerRunning = false;
       let hintCount = 0;
       let maxHints = 10;
+      let isAdvancing = false;
 
       // Local storage functions
       function getPuzzleStorageKey() {
@@ -1222,8 +1223,9 @@ function generateHTML(puzzleData) {
               });
               input.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                selectCell(i, j);
-                input.focus();
+                setTimeout(() => {
+                  selectCell(i, j);
+                }, 10);
               });
               input.addEventListener('input', handleCellInput);
               input.addEventListener('keydown', handleCellKeydown);
@@ -1261,11 +1263,8 @@ function generateHTML(puzzleData) {
           cell.classList.add('selected');
           const input = cell.querySelector('.cell-input');
           if (input && !input.disabled) {
-            // Force focus on mobile devices
-            setTimeout(() => {
-              input.focus();
-              input.click();
-            }, 10);
+            // Single focus attempt to avoid conflicts
+            input.focus();
           }
         }
       }
@@ -1274,15 +1273,26 @@ function generateHTML(puzzleData) {
         const input = e.target;
         const cell = input.closest('td');
         
+        // Prevent multiple rapid inputs
+        if (isAdvancing) return;
+        
         // Ensure uppercase and single character
         if (input.value) {
-          input.value = input.value.toUpperCase().slice(-1);
-          // Move to next cell after input
-          setTimeout(() => moveToNextCell(cell, 1), 10);
+          const newValue = input.value.toUpperCase().slice(-1);
+          input.value = newValue;
+          
+          // Save progress after input
+          saveProgress();
+          
+          // Only auto-advance if we actually entered a new character and not already advancing
+          if (newValue.length > 0) {
+            isAdvancing = true;
+            setTimeout(() => {
+              moveToNextCell(cell, 1);
+              isAdvancing = false;
+            }, 150);
+          }
         }
-        
-        // Save progress after input
-        saveProgress();
       }
 
       function handleCellKeydown(e) {
@@ -1330,8 +1340,7 @@ function generateHTML(puzzleData) {
         const nextCell = document.querySelector(\`tr[id="\${nextRow}"] td:nth-child(\${nextCol + 1})\`);
         if (nextCell && !nextCell.style.backgroundColor) {
           const nextInput = nextCell.querySelector('.cell-input');
-          if (nextInput) {
-            nextInput.focus();
+          if (nextInput && !nextInput.disabled) {
             selectCell(nextRow, nextCol);
           }
         }
