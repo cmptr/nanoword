@@ -493,6 +493,15 @@ function generateHTML(puzzleData) {
         outline: none;
         caret-color: #1976d2;
         text-transform: uppercase;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        resize: none;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        user-select: text;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
       }
       
       td .cell-input:disabled {
@@ -1193,7 +1202,7 @@ function generateHTML(puzzleData) {
               cell.style.backgroundColor = '#535353';
             } else {
               cell.innerHTML = \`
-                <input type="text" class="contents cell-input" maxlength="1" autocomplete="off" autocorrect="off" spellcheck="false">
+                <input type="text" class="contents cell-input" maxlength="1" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text" enterkeyhint="next">
               \`;
               const input = cell.querySelector('.cell-input');
               cell.tabIndex = -1; // Remove cell focusability, let input handle it
@@ -1210,6 +1219,11 @@ function generateHTML(puzzleData) {
               input.addEventListener('click', (e) => {
                 e.stopPropagation();
                 selectCell(i, j);
+              });
+              input.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                selectCell(i, j);
+                input.focus();
               });
               input.addEventListener('input', handleCellInput);
               input.addEventListener('keydown', handleCellKeydown);
@@ -1246,8 +1260,12 @@ function generateHTML(puzzleData) {
         if (cell && !cell.style.backgroundColor) {
           cell.classList.add('selected');
           const input = cell.querySelector('.cell-input');
-          if (input) {
-            input.focus();
+          if (input && !input.disabled) {
+            // Force focus on mobile devices
+            setTimeout(() => {
+              input.focus();
+              input.click();
+            }, 10);
           }
         }
       }
