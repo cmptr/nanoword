@@ -464,9 +464,13 @@ function generateHTML(puzzleData) {
         font-weight: bold;
         padding: auto;
         width: 100%;
+        height: 100%;
         z-index: 0;
         pointer-events: none;
         font-family: "Libre Franklin", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       
       td .number {
@@ -705,6 +709,9 @@ function generateHTML(puzzleData) {
         
         td .contents {
           font-size: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       }
       
@@ -771,6 +778,9 @@ function generateHTML(puzzleData) {
         
         td .contents {
           font-size: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       }
 
@@ -829,6 +839,9 @@ function generateHTML(puzzleData) {
         
         td .contents {
           font-size: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       }
 
@@ -855,6 +868,9 @@ function generateHTML(puzzleData) {
         
         td .contents {
           font-size: 27px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
       }
     </style>
@@ -1113,7 +1129,7 @@ function generateHTML(puzzleData) {
           if (!grid[0][j].isBlack) {
             total++;
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            const userInput = cell.children[1].textContent.toUpperCase();
+            const userInput = cell.children[0].textContent.toUpperCase();
             const correctAnswer = solution[0][j];
             
             if (userInput === correctAnswer) {
@@ -1143,7 +1159,7 @@ function generateHTML(puzzleData) {
         for (let j = 0; j < grid[0].length; j++) {
           if (!grid[0][j].isBlack) {
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            cell.children[1].textContent = solution[0][j];
+            cell.children[0].textContent = solution[0][j];
             cell.style.border = '2px solid green';
           }
         }
@@ -1170,7 +1186,7 @@ function generateHTML(puzzleData) {
         for (let j = 0; j < grid[0].length; j++) {
           if (!grid[0][j].isBlack) {
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            cell.children[1].textContent = '';
+            cell.children[0].textContent = '';
             cell.style.border = '1px solid #535353';
           }
         }
