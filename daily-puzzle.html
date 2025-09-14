@@ -152,8 +152,7 @@
         width: 60rem;
         border-radius: 0.5rem;
         padding: 2rem 4rem;
-        background: linear-gradient(rgb(248, 249, 250), rgb(237, 240, 241));
-        box-shadow: 0 0 3.3rem rgba(0, 0, 0, 0.45);
+        background: white;
         gap: 2rem;
       }
       
@@ -321,10 +320,10 @@
               </div>
             </div>
             <div class="flex gap-2">
-              <button id="hintBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-medium">💡 Hint</button>
-              <button id="checkBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">✓ Check</button>
-              <button id="clearBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">🗑 Clear</button>
-              <button id="revealBtn" class="px-4 py-2 border border-black bg-black text-white hover:bg-gray-800 transition-all duration-200 font-medium">👁 Reveal</button>
+              <button id="hintBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-medium">Hint</button>
+              <button id="checkBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">Check</button>
+              <button id="clearBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">Clear</button>
+              <button id="revealBtn" class="px-4 py-2 border border-black bg-black text-white hover:bg-gray-800 transition-all duration-200 font-medium">Reveal</button>
             </div>
           </div>
           
@@ -713,10 +712,10 @@
         const hintBtn = document.getElementById('hintBtn');
         if (hintCount >= maxHints) {
           hintBtn.disabled = true;
-          hintBtn.textContent = '💡 No Hints Left';
+          hintBtn.textContent = 'No Hints Left';
         } else {
           hintBtn.disabled = false;
-          hintBtn.textContent = `💡 Hint (${maxHints - hintCount} left)`;
+          hintBtn.textContent = `Hint (${maxHints - hintCount} left)`;
         }
       }
       
