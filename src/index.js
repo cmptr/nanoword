@@ -495,6 +495,12 @@ function generateHTML(puzzleData) {
         text-transform: uppercase;
       }
       
+      td .cell-input:disabled {
+        background-color: #f5f5f5;
+        color: #666;
+        cursor: not-allowed;
+      }
+      
       td .number {
         position: absolute;
         top: 0;
@@ -967,6 +973,105 @@ function generateHTML(puzzleData) {
       let hintCount = 0;
       let maxHints = 10;
 
+      // Local storage functions
+      function getPuzzleStorageKey() {
+        return \`nanoword-progress-\${puzzleData.date}\`;
+      }
+
+      function saveProgress() {
+        const grid = puzzleData.grid;
+        const currentElapsedTime = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+        const progress = {
+          date: puzzleData.date,
+          cells: [],
+          hintCount: hintCount,
+          elapsedTime: currentElapsedTime,
+          wasTimerRunning: isTimerRunning,
+          isCompleted: document.getElementById('completionMessage').style.display === 'block'
+        };
+
+        // Save cell values
+        for (let j = 0; j < grid[0].length; j++) {
+          if (!grid[0][j].isBlack) {
+            const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
+            const input = cell.querySelector('.cell-input');
+            progress.cells.push({
+              col: j,
+              value: input.value,
+              isHint: cell.classList.contains('hint-revealed')
+            });
+          }
+        }
+
+        localStorage.setItem(getPuzzleStorageKey(), JSON.stringify(progress));
+      }
+
+      function loadProgress() {
+        const savedProgress = localStorage.getItem(getPuzzleStorageKey());
+        if (!savedProgress) return false;
+
+        try {
+          const progress = JSON.parse(savedProgress);
+          if (progress.date !== puzzleData.date) return false;
+
+          // Restore cell values
+          progress.cells.forEach(cellData => {
+            const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${cellData.col + 1})\`);
+            const input = cell.querySelector('.cell-input');
+            if (input) {
+              input.value = cellData.value;
+              if (cellData.isHint) {
+                cell.classList.add('hint-revealed');
+              }
+            }
+          });
+
+          // Restore hint count
+          hintCount = progress.hintCount || 0;
+          updateHintCounter();
+
+          // Restore timer state - adjust startTime to preserve elapsed time
+          if (progress.elapsedTime !== undefined) {
+            // Calculate what startTime should be to preserve the elapsed time
+            startTime = Date.now() - (progress.elapsedTime * 1000);
+          }
+
+          // Restore completion state
+          if (progress.isCompleted) {
+            document.getElementById('completionMessage').style.display = 'block';
+            disablePuzzleInputs();
+            // Don't start timer if puzzle is completed
+            isTimerRunning = false;
+            // Update timer display with final time
+            document.getElementById('timer').textContent = formatTime(progress.elapsedTime);
+          }
+
+          return true;
+        } catch (e) {
+          console.error('Error loading saved progress:', e);
+          return false;
+        }
+      }
+
+      function clearProgress() {
+        localStorage.removeItem(getPuzzleStorageKey());
+      }
+
+      function disablePuzzleInputs() {
+        // Disable all input fields
+        const inputs = document.querySelectorAll('.cell-input');
+        inputs.forEach(input => {
+          input.disabled = true;
+          input.style.cursor = 'not-allowed';
+        });
+        
+        // Disable control buttons
+        document.getElementById('hintBtn').disabled = true;
+        document.getElementById('checkBtn').disabled = true;
+        document.getElementById('clearBtn').disabled = true;
+        document.getElementById('revealBtn').disabled = true;
+      }
+
       // Timer functionality
       function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
@@ -984,9 +1089,20 @@ function generateHTML(puzzleData) {
       function startTimer() {
         if (isTimerRunning) return;
         
-        startTime = Date.now();
+        // Don't start timer if puzzle is completed
+        const isCompleted = document.getElementById('completionMessage').style.display === 'block';
+        if (isCompleted) return;
+        
+        // Only set startTime if it's not already set (from loadProgress)
+        if (!startTime) {
+          startTime = Date.now();
+        }
+        
         isTimerRunning = true;
         timerInterval = setInterval(updateTimer, 1000);
+        
+        // Save initial progress to establish timer persistence
+        saveProgress();
       }
 
       function stopTimer() {
@@ -1006,8 +1122,14 @@ function generateHTML(puzzleData) {
         // Display clues
         displayClues();
         
-        // Start timer
-        startTimer();
+        // Try to load saved progress (this will adjust startTime if needed)
+        const progressLoaded = loadProgress();
+        
+        // Start the timer only if puzzle is not completed
+        const isCompleted = document.getElementById('completionMessage').style.display === 'block';
+        if (!isCompleted) {
+          startTimer();
+        }
         
         // Select first available cell
         setTimeout(() => {
@@ -1135,6 +1257,9 @@ function generateHTML(puzzleData) {
           // Move to next cell after input
           setTimeout(() => moveToNextCell(cell, 1), 10);
         }
+        
+        // Save progress after input
+        saveProgress();
       }
 
       function handleCellKeydown(e) {
@@ -1145,6 +1270,9 @@ function generateHTML(puzzleData) {
           if (input.value === '') {
             // Move to previous cell and clear it
             moveToNextCell(cell, -1);
+          } else {
+            // Save progress after backspace
+            setTimeout(() => saveProgress(), 10);
           }
         } else if (e.key === 'ArrowRight') {
           e.preventDefault();
@@ -1228,6 +1356,9 @@ function generateHTML(puzzleData) {
         if (correct === total) {
           stopTimer();
           document.getElementById('completionMessage').style.display = 'block';
+          disablePuzzleInputs();
+          // Save completion state
+          saveProgress();
         }
       }
 
@@ -1247,6 +1378,10 @@ function generateHTML(puzzleData) {
         
         stopTimer();
         document.getElementById('completionMessage').style.display = 'block';
+        disablePuzzleInputs();
+        
+        // Save completion state when revealed
+        saveProgress();
       }
       
       function revealSolution() {
@@ -1270,8 +1405,20 @@ function generateHTML(puzzleData) {
             const input = cell.querySelector('.cell-input');
             input.value = '';
             cell.style.border = '1px solid #535353';
+            cell.classList.remove('hint-revealed');
           }
         }
+        
+        // Reset hint count and timer
+        hintCount = 0;
+        updateHintCounter();
+        
+        // Clear saved progress
+        clearProgress();
+        
+        // Restart timer
+        stopTimer();
+        startTimer();
       }
 
       function updateHintCounter() {
@@ -1327,6 +1474,9 @@ function generateHTML(puzzleData) {
         // Increment hint counter
         hintCount++;
         updateHintCounter();
+        
+        // Save progress after hint
+        saveProgress();
         
         // Show feedback
         showHintFeedback(randomCell.row, randomCell.col, correctLetter);
