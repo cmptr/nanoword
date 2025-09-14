@@ -166,7 +166,7 @@ table {
 td {
   height: 50px;
   width: 50px;
-  border: 1px solid black;
+  border: 1px solid #535353;
   background-color: white;
   padding: 0px;
   display: table-cell;
@@ -188,12 +188,13 @@ td .number {
   position: absolute;
   top: 0;
   left: 0.3rem;
-  font-size: 14px;
+  font-size: 32.805px;
   height: 10px;
   z-index: 5;
   pointer-events: none;
   font-family: "Libre Franklin", sans-serif;
-  font-weight: 600;
+  font-weight: 400;
+  color: #535353;
 }
 
 td .input {
@@ -328,7 +329,7 @@ h3 {
   }
 
   td .number {
-    font-size: 12px;
+    font-size: 27.3375px;
   }
 }
 
@@ -451,7 +452,7 @@ h3 {
   }
 
   td .number {
-    font-size: 8px;
+    font-size: 19.13625px;
   }
 
   td .input {
