@@ -190,6 +190,13 @@ async function generateDailyPuzzle(dateString, env) {
     
     // Parse RSS feed to extract headlines and descriptions
     const headlines = parseRSSFeed(rssText);
+    console.log('Parsed headlines:', headlines.length, headlines);
+    
+    // Check if we have any headlines
+    if (headlines.length === 0) {
+      console.log('No headlines found, using fallback');
+      throw new Error('No headlines available');
+    }
     
     // Analyze with Cloudflare Llama3 worker
     const analysisResult = await analyzeWithLlama3(headlines, env);
@@ -250,15 +257,20 @@ async function generateDailyPuzzle(dateString, env) {
 function parseRSSFeed(rssText) {
   // Simple RSS parsing to extract headlines and descriptions
   const headlines = [];
-  const titleRegex = /<title><!\[CDATA\[(.*?)\]\]><\/title>/g;
+  // Title is plain text, description uses CDATA
+  const titleRegex = /<title>(.*?)<\/title>/g;
   const descriptionRegex = /<description><!\[CDATA\[(.*?)\]\]><\/description>/g;
   
   let titleMatch;
   while ((titleMatch = titleRegex.exec(rssText)) !== null) {
-    headlines.push({
-      title: titleMatch[1].trim(),
-      description: ''
-    });
+    // Skip the channel title (first title element)
+    const title = titleMatch[1].trim();
+    if (title && !title.includes('memeorandum')) {
+      headlines.push({
+        title: title,
+        description: ''
+      });
+    }
   }
   
   let descMatch;
@@ -272,13 +284,14 @@ function parseRSSFeed(rssText) {
 }
 
 async function analyzeWithLlama3(headlines, env) {
+  let response;
   try {
     // Use Cloudflare AI binding
-    const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
       messages: [
         {
           role: 'system',
-          content: 'You are a critical dark political satirist. Analyze the provided headlines and descriptions from current news events. Based on the aggregate summary of the overall mood of current events, select a single clever word up to 7 letters that captures the essence of today\'s political climate. Provide both the word and a witty, satirical clue for it. Respond in JSON format: {"word": "WORD", "clue": "Your satirical clue here"}'
+          content: 'You are a witty, expert NYT crossword writer. Based on current news headlines, create a single VALID ENGLISH WORD (maximum 7 letters, complete word only - no abbreviations, acronyms, or partial words) that captures today\'s political climate, then write a clever crossword clue specifically for that word. The word must be found in standard dictionaries. The clue must be for the exact word you choose. RESPOND ONLY WITH JSON FORMAT - NO OTHER TEXT: {"word": "EXAMPLE", "clue": "Sample clue for the word EXAMPLE (7)"}'
         },
         {
           role: 'user',
@@ -289,14 +302,45 @@ async function analyzeWithLlama3(headlines, env) {
       temperature: 0.7
     });
     
-    const analysis = JSON.parse(response.response);
+    console.log('Raw AI response:', response.response);
+    
+    // Try to extract JSON from response if it's wrapped in text
+    let jsonString = response.response.trim();
+    
+    // Multiple strategies to extract JSON
+    let analysis;
+    
+    // Try 1: Direct parse
+    try {
+      analysis = JSON.parse(jsonString);
+    } catch {
+      // Try 2: Extract JSON object from text
+      const jsonMatch = jsonString.match(/\{[^{}]*"word"[^{}]*"clue"[^{}]*\}/);
+      if (jsonMatch) {
+        analysis = JSON.parse(jsonMatch[0]);
+      } else {
+        // Try 3: Look for any JSON-like structure
+        const looserMatch = jsonString.match(/\{.*?\}/s);
+        if (looserMatch) {
+          analysis = JSON.parse(looserMatch[0]);
+        } else {
+          throw new Error('No valid JSON found in response');
+        }
+      }
+    }
+    
+    // Validate the response has required fields
+    if (!analysis.word || !analysis.clue) {
+      throw new Error('Invalid response format: missing word or clue');
+    }
     
     return {
-      word: analysis.word.toUpperCase(),
+      word: analysis.word.toUpperCase().slice(0, 7), // Ensure max 7 letters
       clue: analysis.clue
     };
   } catch (error) {
     console.error('Error with Llama3 analysis:', error);
+    console.error('Raw response was:', response?.response);
     throw error;
   }
 }
@@ -366,10 +410,17 @@ function generateHTML(puzzleData) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Daily word puzzle game. Solve today's satirical crossword clue in the shortest time possible." />
+    <meta property="og:title" content="nanoword - Daily Word Puzzle" />
+    <meta property="og:description" content="Daily word puzzle game. Solve today's satirical crossword clue in the shortest time possible." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="nanoword - Daily Word Puzzle" />
+    <meta name="twitter:description" content="Daily word puzzle game. Solve today's satirical crossword clue in the shortest time possible." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Micro+5&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <title>nanoword</title>
+    <title>nanoword - Daily Word Puzzle</title>
     <style>
       .daily-container {
         max-width: 1200px;
@@ -383,7 +434,8 @@ function generateHTML(puzzleData) {
       }
       
       .puzzle-date {
-        font-size: 1.2rem;
+        font-family: "Tiny5", monospace;
+        font-size: 2.4rem;
         color: #666;
         margin-top: 10px;
       }
@@ -1131,7 +1183,8 @@ function generateHTML(puzzleData) {
 
       // Local storage functions
       function getPuzzleStorageKey() {
-        return \`nanoword-progress-\${puzzleData.date}\`;
+        const puzzleWord = puzzleData.words.across[0].answer;
+        return \`nanoword-progress-\${puzzleData.date}-\${puzzleWord}\`;
       }
 
       function saveProgress() {
@@ -1160,7 +1213,27 @@ function generateHTML(puzzleData) {
           }
         }
 
+        // Clean up old puzzle storage for the same date
+        cleanupOldPuzzleStorage();
+
         localStorage.setItem(getPuzzleStorageKey(), JSON.stringify(progress));
+      }
+
+      function cleanupOldPuzzleStorage() {
+        const currentDate = puzzleData.date;
+        const currentWord = puzzleData.words.across[0].answer;
+        const keysToRemove = [];
+
+        // Check all localStorage keys for old puzzle entries from today
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(\`nanoword-progress-\${currentDate}-\`) && !key.endsWith(\`-\${currentWord}\`)) {
+            keysToRemove.push(key);
+          }
+        }
+
+        // Remove old entries
+        keysToRemove.forEach(key => localStorage.removeItem(key));
       }
 
       function loadProgress() {
@@ -1271,8 +1344,6 @@ function generateHTML(puzzleData) {
           if (navigator.share) {
             try {
               await navigator.share({
-                title: \`nanoword \${date} - \${isRevealed ? 'REVEALED' : 'SOLVED'}\`,
-                text: \`I \${isRevealed ? 'revealed' : 'solved'} today's nanoword puzzle in \${currentTime}!\`,
                 url: shareUrl
               });
             } catch (err) {
@@ -1406,6 +1477,9 @@ function generateHTML(puzzleData) {
         
         // Display clues
         displayClues();
+        
+        // Clean up old puzzle storage before loading current progress
+        cleanupOldPuzzleStorage();
         
         // Try to load saved progress (this will adjust startTime if needed)
         const progressLoaded = loadProgress();
