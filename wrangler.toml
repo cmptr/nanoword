@@ -9,3 +9,7 @@ name = "nanoword"
 binding = "PUZZLES"
 id = "0a6922f1a0a44521bc48c23e69322b4f"
 preview_id = "dd07a3577c3d42b7a491f11e0072cf8b"
+
+# AI binding for Llama3
+[ai]
+binding = "AI"

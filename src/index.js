@@ -31,11 +31,13 @@ async function handleDailyPuzzle(request, env) {
     // If no puzzle exists for today, generate one
     if (!puzzleData) {
       console.log(`No puzzle found for ${today}, generating new one...`);
-      puzzleData = await generateDailyPuzzle(today);
+      puzzleData = await generateDailyPuzzle(today, env);
       
       // Store the generated puzzle in KV
       await env.PUZZLES.put(puzzleKey, JSON.stringify(puzzleData));
       console.log(`Stored puzzle for ${today} in KV`);
+    } else {
+      console.log(`Using cached puzzle for ${today}`);
     }
     
     // Return the HTML page with the puzzle data
@@ -57,34 +59,148 @@ async function handleDailyPuzzle(request, env) {
   }
 }
 
-async function generateDailyPuzzle(dateString) {
-  // This is a simplified puzzle generator for the worker
-  // In a real implementation, you might want to pre-generate puzzles
-  // or use a more sophisticated generation algorithm
+async function generateDailyPuzzle(dateString, env) {
+  try {
+    // Fetch RSS feed from memeorandum
+    const rssResponse = await fetch('https://www.memeorandum.com/feed.xml');
+    const rssText = await rssResponse.text();
+    
+    // Parse RSS feed to extract headlines and descriptions
+    const headlines = parseRSSFeed(rssText);
+    
+    // Analyze with Cloudflare Llama3 worker
+    const analysisResult = await analyzeWithLlama3(headlines, env);
+    
+    // Extract word and clue from the analysis
+    const { word, clue } = analysisResult;
+    const wordLength = word.length;
+    
+    // Create a single row grid for the word
+    const grid = [
+      Array.from({ length: wordLength }, (_, col) => ({
+        row: 0,
+        col: col,
+        contents: "",
+        isBlack: false,
+        number: "",
+        acrossNumber: 1,
+        downNumber: ""
+      }))
+    ];
+    
+    const solution = [word.split('')];
+    
+    const clues = {
+      across: [
+        { number: 1, clue: clue, length: wordLength, answer: word }
+      ],
+      down: []
+    };
+    
+    const wordsData = {
+      across: [
+        {
+          number: 1,
+          length: wordLength,
+          clue: clue,
+          answer: word,
+          positions: Array.from({ length: wordLength }, (_, col) => ({ row: 0, col: col }))
+        }
+      ],
+      down: []
+    };
+    
+    return {
+      date: dateString,
+      grid: grid,
+      solution: solution,
+      clues: clues,
+      words: wordsData
+    };
+  } catch (error) {
+    console.error('Error generating puzzle:', error);
+    // Fallback to a default word if RSS/LLM fails
+    return generateFallbackPuzzle(dateString);
+  }
+}
+
+function parseRSSFeed(rssText) {
+  // Simple RSS parsing to extract headlines and descriptions
+  const headlines = [];
+  const titleRegex = /<title><!\[CDATA\[(.*?)\]\]><\/title>/g;
+  const descriptionRegex = /<description><!\[CDATA\[(.*?)\]\]><\/description>/g;
   
-  const words = [
-    { word: "DUSK", clue: "Tending to darkness or blackness; moderately dark or black; dusky." },
-    { word: "ILLO", clue: "(informal) An illustration." },
-    { word: "DOL", clue: "(medicine) The unit of measurement for pain." },
-    { word: "SHELL", clue: "A hard external covering of an animal." },
-    { word: "NAO", clue: "(nautical, historical, rare) A Spanish or Portuguese carrack." },
-    { word: "QUIZ", clue: "A test of knowledge, especially as a competition between individuals or teams." },
-    { word: "JAZZ", clue: "A type of music of black American origin characterized by improvisation, syncopation, and usually a regular or forceful rhythm." },
-    { word: "PUZZLE", clue: "A game, toy, or problem designed to test ingenuity or knowledge." }
+  let titleMatch;
+  while ((titleMatch = titleRegex.exec(rssText)) !== null) {
+    headlines.push({
+      title: titleMatch[1].trim(),
+      description: ''
+    });
+  }
+  
+  let descMatch;
+  let index = 0;
+  while ((descMatch = descriptionRegex.exec(rssText)) !== null && index < headlines.length) {
+    headlines[index].description = descMatch[1].trim();
+    index++;
+  }
+  
+  return headlines.slice(0, 20); // Limit to first 20 items
+}
+
+async function analyzeWithLlama3(headlines, env) {
+  try {
+    // Use Cloudflare AI binding
+    const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a critical dark political satirist. Analyze the provided headlines and descriptions from current news events. Based on the aggregate summary of the overall mood of current events, select a single clever word up to 10 letters that captures the essence of today\'s political climate. Provide both the word and a witty, satirical clue for it. Respond in JSON format: {"word": "WORD", "clue": "Your satirical clue here"}'
+        },
+        {
+          role: 'user',
+          content: `Analyze these current headlines and provide a clever word: ${JSON.stringify(headlines)}`
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    });
+    
+    const analysis = JSON.parse(response.response);
+    
+    return {
+      word: analysis.word.toUpperCase(),
+      clue: analysis.clue
+    };
+  } catch (error) {
+    console.error('Error with Llama3 analysis:', error);
+    throw error;
+  }
+}
+
+function generateFallbackPuzzle(dateString) {
+  // Fallback words if RSS/LLM fails
+  const fallbackWords = [
+    { word: "CHAOS", clue: "Complete disorder and confusion; the current state of affairs." },
+    { word: "FARCE", clue: "A comic dramatic work using buffoonery and horseplay; also, a ridiculous situation." },
+    { word: "CIRCUS", clue: "A traveling company of performers; also, a chaotic or confused situation." },
+    { word: "THEATER", clue: "A building for dramatic performances; also, the dramatic quality of events." },
+    { word: "SPECTACLE", clue: "A visually striking performance or display; often used to distract from reality." },
+    { word: "MELODRAMA", clue: "A sensational dramatic piece with exaggerated characters and exciting events." },
+    { word: "TRAVESTY", clue: "A false, absurd, or distorted representation of something." },
+    { word: "CHARADE", clue: "An absurd pretense intended to create a pleasant or respectable appearance." }
   ];
   
-  // Pick a random word (up to 8 letters)
-  const selectedWord = words[Math.floor(Math.random() * words.length)];
+  const selectedWord = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
   const wordLength = selectedWord.word.length;
   
-  // Create a single row grid for the word
   const grid = [
     Array.from({ length: wordLength }, (_, col) => ({
       row: 0,
       col: col,
       contents: "",
       isBlack: false,
-      number: col === 0 ? "1" : "",
+      number: "",
       acrossNumber: 1,
       downNumber: ""
     }))
@@ -282,7 +398,7 @@ function generateHTML(puzzleData) {
       }
       
       .clue-text {
-        font-size: 1.4rem;
+        font-size: 2.1rem;
         font-family: "Libre Franklin", sans-serif;
         color: #535353;
         line-height: 1.4;
@@ -314,8 +430,8 @@ function generateHTML(puzzleData) {
       }
       
       td {
-        height: 50px;
-        width: 50px;
+        height: 125px;
+        width: 125px;
         border: 1px solid #535353 !important;
         background-color: white;
         padding: 0px;
@@ -329,7 +445,7 @@ function generateHTML(puzzleData) {
       
       td .contents {
         text-align: center;
-        font-size: 30px;
+        font-size: 75px;
         font-weight: bold;
         padding: auto;
         width: 100%;
@@ -471,6 +587,20 @@ function generateHTML(puzzleData) {
         background-color: transparent;
       }
       
+      .message {
+        text-align: center;
+        margin-top: 30px;
+        padding: 20px;
+      }
+      
+      .message h2 {
+        font-family: "Libre Franklin", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #535353;
+        margin: 0;
+      }
+      
       /* Override any potential Tailwind or browser defaults */
       .controls button,
       .controls .text-button,
@@ -544,14 +674,14 @@ function generateHTML(puzzleData) {
 
       @media screen and (max-width: 1250px) {
         td {
-          height: 45px;
-          width: 45px;
-          min-height: 45px;
-          min-width: 45px;
+          height: 100px;
+          width: 100px;
+          min-height: 100px;
+          min-width: 100px;
         }
         
-        td .number {
-          font-size: 27.3375px;
+        td .contents {
+          font-size: 60px;
         }
       }
       
@@ -591,7 +721,7 @@ function generateHTML(puzzleData) {
         }
         
         td .contents {
-          font-size: 2rem;
+          font-size: 4.5rem;
         }
       }
 
@@ -608,7 +738,7 @@ function generateHTML(puzzleData) {
         }
         
         td .contents {
-          font-size: 1.7rem;
+          font-size: 3.75rem;
         }
         
         .puzzle-info {
@@ -631,7 +761,7 @@ function generateHTML(puzzleData) {
         }
         
         td .contents {
-          font-size: 1.4rem;
+          font-size: 3.15rem;
         }
       }
     </style>
@@ -774,7 +904,6 @@ function generateHTML(puzzleData) {
               cell.style.backgroundColor = '#535353';
             } else {
               cell.innerHTML = \`
-                <div class="number">\${cellData.number || ''}</div>
                 <div class="contents"></div>
               \`;
               cell.tabIndex = 0; // Make cell focusable
@@ -798,7 +927,7 @@ function generateHTML(puzzleData) {
         // Display the single word clue
         const wordClue = document.getElementById('wordClue');
         const clue = puzzleData.clues.across[0]; // Get the single clue
-        wordClue.textContent = \`\${clue.number}. \${clue.clue} (\${clue.length} letters)\`;
+        wordClue.textContent = clue.clue;
       }
 
       function selectCell(row, col) {
