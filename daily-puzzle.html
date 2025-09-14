@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
-    <title>Nanowords Daily Puzzle</title>
+    <title>nanoword Daily Puzzle</title>
     <style>
       .daily-container {
         max-width: 1200px;
@@ -92,68 +92,7 @@
         text-align: center;
       }
       
-      .control-buttons {
-        display: flex;
-        gap: 10px;
-      }
       
-      .hint-button, .check-button, .clear-button, .reveal-button {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-family: "Libre Franklin", sans-serif;
-      }
-      
-      .hint-button {
-        background-color: #fff3e0;
-        color: #f57c00;
-        border: 1px solid #ffb74d;
-      }
-      
-      .hint-button:hover {
-        background-color: #ffe0b2;
-      }
-      
-      .hint-button:disabled {
-        background-color: #f5f5f5;
-        color: #999;
-        border-color: #ddd;
-        cursor: not-allowed;
-      }
-      
-      .check-button {
-        background-color: #e8f5e8;
-        color: #2e7d32;
-        border: 1px solid #4caf50;
-      }
-      
-      .check-button:hover {
-        background-color: #c8e6c9;
-      }
-      
-      .clear-button {
-        background-color: #f3e5f5;
-        color: #7b1fa2;
-        border: 1px solid #ba68c8;
-      }
-      
-      .clear-button:hover {
-        background-color: #e1bee7;
-      }
-      
-      .reveal-button {
-        background-color: #ffebee;
-        color: #c62828;
-        border: 1px solid #ef5350;
-      }
-      
-      .reveal-button:hover {
-        background-color: #ffcdd2;
-      }
       
       .btn {
         padding: 10px 20px;
@@ -263,6 +202,15 @@
         padding: 1px 3px;
       }
       
+      .pronunciation {
+        font-size: 1.2rem;
+        font-style: italic;
+        color: #666;
+        font-weight: 400;
+        text-align: center;
+        margin-top: 5px;
+      }
+      
       @media (max-width: 768px) {
         .puzzle-main {
           flex-direction: column;
@@ -290,13 +238,14 @@
     <div class="daily-container">
       <div class="puzzle-header">
         <h1>
-          <span class="title-word">Nanowords</span>
+          <span class="title-word">nanoword</span>
         </h1>
+        <div class="pronunciation">/næn.oʊ-/</div>
         <div class="puzzle-date" id="puzzleDate">Loading...</div>
       </div>
 
       <div id="loading" class="loading">
-        🎯 Loading today's puzzle...
+        🎯 Loading today's nanoword puzzle...
       </div>
 
       <div id="error" class="error" style="display: none;">
@@ -314,11 +263,11 @@
                 <span id="hintCount">0</span>
               </div>
             </div>
-            <div class="control-buttons">
-              <button id="hintBtn" class="hint-button">💡 Hint</button>
-              <button id="checkBtn" class="check-button">✓ Check</button>
-              <button id="clearBtn" class="clear-button">🗑 Clear</button>
-              <button id="revealBtn" class="reveal-button">👁 Reveal</button>
+            <div class="flex gap-2">
+              <button id="hintBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-medium">💡 Hint</button>
+              <button id="checkBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">✓ Check</button>
+              <button id="clearBtn" class="px-4 py-2 border border-black bg-white text-black hover:bg-gray-100 transition-all duration-200 font-medium">🗑 Clear</button>
+              <button id="revealBtn" class="px-4 py-2 border border-black bg-black text-white hover:bg-gray-800 transition-all duration-200 font-medium">👁 Reveal</button>
             </div>
           </div>
           
@@ -349,7 +298,7 @@
       </div>
 
       <div class="message" id="completionMessage" style="display: none;">
-        <h2>🎉 Congratulations! You've completed today's Nanowords puzzle!</h2>
+        <h2>🎉 Congratulations! You've completed today's nanoword puzzle!</h2>
       </div>
     </div>
 
@@ -358,6 +307,7 @@
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       let puzzleData = null;
       let timerInterval = null;

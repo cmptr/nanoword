@@ -31,16 +31,22 @@ class DailyPuzzleCLI {
     return path.join(this.puzzleDir, `puzzle-${date}.json`);
   }
 
-  async generateDailyPuzzle() {
-    const dateString = this.getDateString();
-    const puzzlePath = this.getPuzzlePath(dateString);
+  async generateDailyPuzzle(dateString = null, useRandomSeed = false) {
+    const puzzleDate = dateString || this.getDateString();
+    const puzzlePath = this.getPuzzlePath(puzzleDate);
 
     console.log(chalk.blue('🎯 Generating today\'s Nanowords puzzle...'));
-    console.log(chalk.gray(`Date: ${dateString}`));
+    console.log(chalk.gray(`Date: ${puzzleDate}`));
 
     try {
       const generator = new CrosswordGenerator();
-      generator.setDailySeed(dateString);
+      if (useRandomSeed) {
+        // Use current timestamp for random generation
+        generator.setDailySeed(puzzleDate + '-' + Date.now());
+        console.log(chalk.yellow('🎲 Using random seed for unique puzzle'));
+      } else {
+        generator.setDailySeed(puzzleDate);
+      }
       
       const puzzle = await generator.generatePuzzle();
       
@@ -316,7 +322,9 @@ class DailyPuzzleCLI {
     try {
       switch (command) {
         case 'generate':
-          await this.generateDailyPuzzle();
+          const useRandom = args.includes('--random') || args.includes('-r');
+          const dateArg = args.find(arg => arg.startsWith('--date='))?.split('=')[1];
+          await this.generateDailyPuzzle(dateArg, useRandom);
           break;
           
         case 'solve':
@@ -348,12 +356,12 @@ class DailyPuzzleCLI {
           
         case 'load':
           // Load specific date puzzle
-          const dateArg = args[1];
-          if (!dateArg) {
+          const loadDateArg = args[1];
+          if (!loadDateArg) {
             console.log(chalk.red('❌ Please specify a date (YYYY-MM-DD)'));
             process.exit(1);
           }
-          const loadPuzzle = this.loadPuzzle(dateArg);
+          const loadPuzzle = this.loadPuzzle(loadDateArg);
           this.displayPuzzle(loadPuzzle);
           await this.startSolving(loadPuzzle);
           break;
@@ -378,6 +386,8 @@ class DailyPuzzleCLI {
           console.log(chalk.yellow('📖 Nanowords Daily Puzzle CLI'));
           console.log(chalk.gray('Commands:'));
           console.log(chalk.white('  generate  - Generate today\'s puzzle'));
+          console.log(chalk.white('    --random, -r     - Use random seed for unique puzzle'));
+          console.log(chalk.white('    --date=YYYY-MM-DD - Generate for specific date'));
           console.log(chalk.white('  solve     - Solve today\'s puzzle (default, auto-generates if missing)'));
           console.log(chalk.white('  show      - Show today\'s puzzle without solving (auto-generates if missing)'));
           console.log(chalk.white('  load [date] - Load puzzle for specific date (YYYY-MM-DD)'));
