@@ -44,7 +44,9 @@ async function handleDailyPuzzle(request, env) {
     return new Response(generateHTML(puzzleData), {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
     
@@ -155,7 +157,7 @@ async function analyzeWithLlama3(headlines, env) {
       messages: [
         {
           role: 'system',
-          content: 'You are a critical dark political satirist. Analyze the provided headlines and descriptions from current news events. Based on the aggregate summary of the overall mood of current events, select a single clever word up to 10 letters that captures the essence of today\'s political climate. Provide both the word and a witty, satirical clue for it. Respond in JSON format: {"word": "WORD", "clue": "Your satirical clue here"}'
+          content: 'You are a critical dark political satirist. Analyze the provided headlines and descriptions from current news events. Based on the aggregate summary of the overall mood of current events, select a single clever word up to 7 letters that captures the essence of today\'s political climate. Provide both the word and a witty, satirical clue for it. Respond in JSON format: {"word": "WORD", "clue": "Your satirical clue here"}'
         },
         {
           role: 'user',
@@ -185,10 +187,9 @@ function generateFallbackPuzzle(dateString) {
     { word: "FARCE", clue: "A comic dramatic work using buffoonery and horseplay; also, a ridiculous situation." },
     { word: "CIRCUS", clue: "A traveling company of performers; also, a chaotic or confused situation." },
     { word: "THEATER", clue: "A building for dramatic performances; also, the dramatic quality of events." },
-    { word: "SPECTACLE", clue: "A visually striking performance or display; often used to distract from reality." },
-    { word: "MELODRAMA", clue: "A sensational dramatic piece with exaggerated characters and exciting events." },
-    { word: "TRAVESTY", clue: "A false, absurd, or distorted representation of something." },
-    { word: "CHARADE", clue: "An absurd pretense intended to create a pleasant or respectable appearance." }
+    { word: "DRAMA", clue: "A composition in prose or verse presenting a story in pantomime or dialogue." },
+    { word: "SATIRE", clue: "The use of humor, irony, or exaggeration to criticize people's vices or follies." },
+    { word: "COMEDY", clue: "A dramatic work that is light and often humorous in tone." }
   ];
   
   const selectedWord = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
@@ -425,7 +426,10 @@ function generateHTML(puzzleData) {
       .table-container {
         display: flex;
         flex-direction: column;
-        width: auto;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        padding: 0 10px;
       }
       
       table {
@@ -438,6 +442,7 @@ function generateHTML(puzzleData) {
         min-width: auto;
         min-height: auto;
         margin: 0 auto;
+        max-width: 100%;
       }
       
       table#puzzleGrid {
@@ -447,6 +452,8 @@ function generateHTML(puzzleData) {
       td {
         height: 125px;
         width: 125px;
+        min-width: 60px;
+        max-width: 125px;
         border: 1px solid #535353 !important;
         background-color: white;
         padding: 0px;
@@ -759,7 +766,7 @@ function generateHTML(puzzleData) {
         
         .table-container {
           width: 100%;
-          overflow-x: auto;
+          overflow-x: hidden;
           padding: 0 10px;
         }
         
@@ -1001,6 +1008,31 @@ function generateHTML(puzzleData) {
         const table = document.getElementById('puzzleGrid');
         table.innerHTML = '';
 
+        // Calculate optimal cell size based on word length and screen width
+        const wordLength = grid[0].length;
+        const screenWidth = window.innerWidth;
+        let cellSize;
+        
+        if (screenWidth <= 360) {
+          // Very small screens - smaller cells
+          cellSize = Math.min(45, Math.floor((screenWidth - 40) / wordLength));
+        } else if (screenWidth <= 480) {
+          // Small screens
+          cellSize = Math.min(50, Math.floor((screenWidth - 40) / wordLength));
+        } else if (screenWidth <= 768) {
+          // Medium screens
+          cellSize = Math.min(60, Math.floor((screenWidth - 40) / wordLength));
+        } else if (screenWidth <= 1024) {
+          // Large screens
+          cellSize = Math.min(100, Math.floor((screenWidth - 80) / wordLength));
+        } else {
+          // Desktop - use full size
+          cellSize = 125;
+        }
+        
+        // Ensure minimum cell size
+        cellSize = Math.max(cellSize, 40);
+
         for (let i = 0; i < grid.length; i++) {
           const row = document.createElement('tr');
           row.id = i;
@@ -1018,6 +1050,10 @@ function generateHTML(puzzleData) {
               cell.tabIndex = 0; // Make cell focusable
               cell.dataset.row = i;
               cell.dataset.col = j;
+              cell.style.width = cellSize + 'px';
+              cell.style.height = cellSize + 'px';
+              cell.style.minWidth = cellSize + 'px';
+              cell.style.minHeight = cellSize + 'px';
               cell.addEventListener('click', (e) => {
                 e.preventDefault();
                 selectCell(i, j);
@@ -1030,6 +1066,13 @@ function generateHTML(puzzleData) {
           
           table.appendChild(row);
         }
+        
+        // Adjust font size based on cell size
+        const fontSize = Math.floor(cellSize * 0.6);
+        const contents = table.querySelectorAll('.contents');
+        contents.forEach(content => {
+          content.style.fontSize = fontSize + 'px';
+        });
       }
 
       function displayClues() {
@@ -1277,6 +1320,13 @@ function generateHTML(puzzleData) {
           }
         }, 3000);
       }
+
+      // Handle window resize to recalculate cell sizes
+      window.addEventListener('resize', () => {
+        if (puzzleData) {
+          generateGrid();
+        }
+      });
 
       // Display puzzle when page loads
       document.addEventListener('DOMContentLoaded', displayPuzzle);
