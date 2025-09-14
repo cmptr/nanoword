@@ -780,8 +780,8 @@ function generateHTML(puzzleData) {
       }
       
       .message h2 {
-        font-family: "Libre Baskerville", serif;
-        font-size: 2.1rem;
+        font-family: "Micro 5", monospace;
+        font-size: 3rem;
         font-weight: normal;
         color: #535353;
         margin: 0 0 20px 0;
@@ -792,9 +792,9 @@ function generateHTML(puzzleData) {
         background: linear-gradient(rgb(1, 94, 89), rgb(1, 67, 70));
         color: white;
         border: none;
-        padding: 12px 24px;
-        font-family: "Libre Baskerville", serif;
-        font-size: 1.1rem;
+        padding: 16px 32px;
+        font-family: "Micro 5", monospace;
+        font-size: 1.5rem;
         font-weight: 600;
         border-radius: 6px;
         cursor: pointer;
@@ -1327,8 +1327,8 @@ function generateHTML(puzzleData) {
           padding: 12px 20px;
           border-radius: 6px;
           z-index: 1000;
-          font-family: "Libre Baskerville", serif;
-          font-size: 0.9rem;
+          font-family: "Tiny5", monospace;
+          font-size: 1.1rem;
           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         \`;
         
@@ -1907,6 +1907,13 @@ function generateShareHTML(shareData, puzzleData) {
         font-family: "Tiny5", monospace;
         font-size: 3rem;
         color: #535353;
+        margin-bottom: 10px;
+      }
+      
+      .date {
+        font-family: "Tiny5", monospace;
+        font-size: 1.5rem;
+        color: #666;
         margin-bottom: 20px;
       }
       
@@ -1916,28 +1923,6 @@ function generateShareHTML(shareData, puzzleData) {
         color: ${shareData.isRevealed ? '#f57c00' : '#4caf50'};
       }
       
-      .puzzle-info {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 30px;
-        margin: 30px 0;
-      }
-      
-      .clue {
-        font-family: "Libre Baskerville", serif;
-        font-size: 1.4rem;
-        color: #535353;
-        margin-bottom: 15px;
-        font-style: italic;
-      }
-      
-      .answer {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #535353;
-        letter-spacing: 2px;
-        margin-bottom: 20px;
-      }
       
       .stats {
         display: flex;
@@ -1967,9 +1952,9 @@ function generateShareHTML(shareData, puzzleData) {
         background: linear-gradient(rgb(1, 94, 89), rgb(1, 67, 70));
         color: white;
         border: none;
-        padding: 15px 30px;
-        font-family: "Libre Baskerville", serif;
-        font-size: 1.2rem;
+        padding: 20px 40px;
+        font-family: "Micro 5", monospace;
+        font-size: 1.6rem;
         font-weight: 600;
         border-radius: 8px;
         cursor: pointer;
@@ -1993,16 +1978,12 @@ function generateShareHTML(shareData, puzzleData) {
           font-size: 2rem;
         }
         
-        .stats {
-          gap: 20px;
-        }
-        
-        .clue {
+        .date {
           font-size: 1.2rem;
         }
         
-        .answer {
-          font-size: 1.5rem;
+        .stats {
+          gap: 20px;
         }
       }
     </style>
@@ -2010,12 +1991,9 @@ function generateShareHTML(shareData, puzzleData) {
   <body>
     <div class="share-container">
       <h1 class="title">nanoword</h1>
+      <div class="date">${shareData.date}</div>
       <div class="status">${statusEmoji} ${statusText}</div>
       
-      <div class="puzzle-info">
-        <div class="clue">"${puzzleData.clues.across[0].clue}"</div>
-        <div class="answer">${puzzleData.clues.across[0].answer}</div>
-      </div>
       
       <div class="stats">
         <div class="stat">
