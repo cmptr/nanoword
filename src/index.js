@@ -469,15 +469,30 @@ function generateHTML(puzzleData) {
         text-align: center;
         font-size: 75px;
         font-weight: bold;
-        padding: auto;
         width: 100%;
         height: 100%;
-        z-index: 0;
-        pointer-events: none;
+        border: none;
+        background: transparent;
         font-family: "Libre Franklin", sans-serif;
         display: flex;
         align-items: center;
         justify-content: center;
+        outline: none;
+        caret-color: #1976d2;
+      }
+      
+      td .cell-input {
+        text-align: center;
+        font-size: 75px;
+        font-weight: bold;
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        font-family: "Libre Franklin", sans-serif;
+        outline: none;
+        caret-color: #1976d2;
+        text-transform: uppercase;
       }
       
       td .number {
@@ -561,7 +576,8 @@ function generateHTML(puzzleData) {
         outline: none;
       }
       
-      td.hint-revealed .contents {
+      td.hint-revealed .contents,
+      td.hint-revealed .cell-input {
         color: #f57c00;
         font-weight: bold;
         background-color: #fff8e1;
@@ -714,7 +730,8 @@ function generateHTML(puzzleData) {
           min-width: 100px;
         }
         
-        td .contents {
+        td .contents,
+        td .cell-input {
           font-size: 60px;
           display: flex;
           align-items: center;
@@ -783,7 +800,8 @@ function generateHTML(puzzleData) {
           min-width: 60px;
         }
         
-        td .contents {
+        td .contents,
+        td .cell-input {
           font-size: 36px;
           display: flex;
           align-items: center;
@@ -844,7 +862,8 @@ function generateHTML(puzzleData) {
           min-width: 50px;
         }
         
-        td .contents {
+        td .contents,
+        td .cell-input {
           font-size: 30px;
           display: flex;
           align-items: center;
@@ -873,7 +892,8 @@ function generateHTML(puzzleData) {
           min-width: 45px;
         }
         
-        td .contents {
+        td .contents,
+        td .cell-input {
           font-size: 27px;
           display: flex;
           align-items: center;
@@ -991,10 +1011,11 @@ function generateHTML(puzzleData) {
         
         // Select first available cell
         setTimeout(() => {
-          const firstCell = document.querySelector('td:not([style*="background-color"])');
-          if (firstCell) {
-            const row = parseInt(firstCell.dataset.row);
-            const col = parseInt(firstCell.dataset.col);
+          const firstInput = document.querySelector('td .cell-input');
+          if (firstInput) {
+            const cell = firstInput.closest('td');
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
             selectCell(row, col);
           }
         }, 100);
@@ -1045,20 +1066,26 @@ function generateHTML(puzzleData) {
               cell.style.backgroundColor = '#535353';
             } else {
               cell.innerHTML = \`
-                <div class="contents"></div>
+                <input type="text" class="contents cell-input" maxlength="1" autocomplete="off" autocorrect="off" spellcheck="false">
               \`;
-              cell.tabIndex = 0; // Make cell focusable
+              const input = cell.querySelector('.cell-input');
+              cell.tabIndex = -1; // Remove cell focusability, let input handle it
               cell.dataset.row = i;
               cell.dataset.col = j;
               cell.style.width = cellSize + 'px';
               cell.style.height = cellSize + 'px';
               cell.style.minWidth = cellSize + 'px';
               cell.style.minHeight = cellSize + 'px';
-              cell.addEventListener('click', (e) => {
-                e.preventDefault();
+              
+              input.addEventListener('focus', (e) => {
                 selectCell(i, j);
               });
-              cell.addEventListener('keydown', handleCellKeydown);
+              input.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectCell(i, j);
+              });
+              input.addEventListener('input', handleCellInput);
+              input.addEventListener('keydown', handleCellKeydown);
             }
             
             row.appendChild(cell);
@@ -1069,9 +1096,9 @@ function generateHTML(puzzleData) {
         
         // Adjust font size based on cell size
         const fontSize = Math.floor(cellSize * 0.6);
-        const contents = table.querySelectorAll('.contents');
-        contents.forEach(content => {
-          content.style.fontSize = fontSize + 'px';
+        const inputs = table.querySelectorAll('.cell-input');
+        inputs.forEach(input => {
+          input.style.fontSize = fontSize + 'px';
         });
       }
 
@@ -1091,27 +1118,33 @@ function generateHTML(puzzleData) {
         const cell = document.querySelector(\`tr[id="\${row}"] td:nth-child(\${col + 1})\`);
         if (cell && !cell.style.backgroundColor) {
           cell.classList.add('selected');
-          cell.focus();
+          const input = cell.querySelector('.cell-input');
+          if (input) {
+            input.focus();
+          }
+        }
+      }
+
+      function handleCellInput(e) {
+        const input = e.target;
+        const cell = input.closest('td');
+        
+        // Ensure uppercase and single character
+        if (input.value) {
+          input.value = input.value.toUpperCase().slice(-1);
+          // Move to next cell after input
+          setTimeout(() => moveToNextCell(cell, 1), 10);
         }
       }
 
       function handleCellKeydown(e) {
-        const cell = e.target;
-        const contents = cell.querySelector('.contents');
+        const input = e.target;
+        const cell = input.closest('td');
         
-        if (e.key.match(/^[a-zA-Z]$/)) {
-          e.preventDefault();
-          contents.textContent = e.key.toUpperCase();
-          
-          // Move to next cell (across)
-          moveToNextCell(cell, 1);
-        } else if (e.key === 'Backspace') {
-          e.preventDefault();
-          if (contents.textContent === '') {
+        if (e.key === 'Backspace') {
+          if (input.value === '') {
             // Move to previous cell and clear it
             moveToNextCell(cell, -1);
-          } else {
-            contents.textContent = '';
           }
         } else if (e.key === 'ArrowRight') {
           e.preventDefault();
@@ -1145,8 +1178,11 @@ function generateHTML(puzzleData) {
         
         const nextCell = document.querySelector(\`tr[id="\${nextRow}"] td:nth-child(\${nextCol + 1})\`);
         if (nextCell && !nextCell.style.backgroundColor) {
-          nextCell.focus();
-          selectCell(nextRow, nextCol);
+          const nextInput = nextCell.querySelector('.cell-input');
+          if (nextInput) {
+            nextInput.focus();
+            selectCell(nextRow, nextCol);
+          }
         }
       }
 
@@ -1172,7 +1208,8 @@ function generateHTML(puzzleData) {
           if (!grid[0][j].isBlack) {
             total++;
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            const userInput = cell.children[0].textContent.toUpperCase();
+            const input = cell.querySelector('.cell-input');
+            const userInput = input.value.toUpperCase();
             const correctAnswer = solution[0][j];
             
             if (userInput === correctAnswer) {
@@ -1202,7 +1239,8 @@ function generateHTML(puzzleData) {
         for (let j = 0; j < grid[0].length; j++) {
           if (!grid[0][j].isBlack) {
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            cell.children[0].textContent = solution[0][j];
+            const input = cell.querySelector('.cell-input');
+            input.value = solution[0][j];
             cell.style.border = '2px solid green';
           }
         }
@@ -1229,7 +1267,8 @@ function generateHTML(puzzleData) {
         for (let j = 0; j < grid[0].length; j++) {
           if (!grid[0][j].isBlack) {
             const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-            cell.children[0].textContent = '';
+            const input = cell.querySelector('.cell-input');
+            input.value = '';
             cell.style.border = '1px solid #535353';
           }
         }
@@ -1263,9 +1302,9 @@ function generateHTML(puzzleData) {
         
         for (let j = 0; j < grid[0].length; j++) {
           const cell = document.querySelector(\`tr[id="0"] td:nth-child(\${j + 1})\`);
-          const contents = cell.querySelector('.contents');
-          if (!grid[0][j].isBlack && contents.textContent === '') {
-            emptyCells.push({ row: 0, col: j, cell: cell, contents: contents });
+          const input = cell.querySelector('.cell-input');
+          if (!grid[0][j].isBlack && input.value === '') {
+            emptyCells.push({ row: 0, col: j, cell: cell, input: input });
           }
         }
         
@@ -1280,7 +1319,7 @@ function generateHTML(puzzleData) {
         
         // Fill in the correct letter
         const correctLetter = solution[0][randomCell.col];
-        randomCell.contents.textContent = correctLetter;
+        randomCell.input.value = correctLetter;
         
         // Add hint styling
         randomCell.cell.classList.add('hint-revealed');
