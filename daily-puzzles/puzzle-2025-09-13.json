@@ -7,44 +7,44 @@
         "col": 0,
         "contents": "A",
         "isBlack": false,
-        "number": "1",
-        "acrossNumber": 1,
-        "downNumber": ""
+        "number": "3",
+        "acrossNumber": "",
+        "downNumber": 3
       },
       {
         "row": 0,
         "col": 1,
-        "contents": "M",
-        "isBlack": false,
-        "number": "4",
-        "acrossNumber": 1,
-        "downNumber": 4
+        "contents": "#",
+        "isBlack": true,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": ""
       },
       {
         "row": 0,
         "col": 2,
-        "contents": "B",
-        "isBlack": false,
+        "contents": "#",
+        "isBlack": true,
         "number": "",
-        "acrossNumber": 1,
+        "acrossNumber": "",
         "downNumber": ""
       },
       {
         "row": 0,
         "col": 3,
-        "contents": "A",
+        "contents": "F",
         "isBlack": false,
-        "number": "5",
-        "acrossNumber": 1,
-        "downNumber": 5
+        "number": "4",
+        "acrossNumber": "",
+        "downNumber": 4
       },
       {
         "row": 0,
         "col": 4,
-        "contents": "C",
-        "isBlack": false,
+        "contents": "#",
+        "isBlack": true,
         "number": "",
-        "acrossNumber": 1,
+        "acrossNumber": "",
         "downNumber": ""
       }
     ],
@@ -52,24 +52,15 @@
       {
         "row": 1,
         "col": 0,
-        "contents": "#",
-        "isBlack": true,
+        "contents": "W",
+        "isBlack": false,
         "number": "",
         "acrossNumber": "",
-        "downNumber": ""
+        "downNumber": 3
       },
       {
         "row": 1,
         "col": 1,
-        "contents": "O",
-        "isBlack": false,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": 4
-      },
-      {
-        "row": 1,
-        "col": 2,
         "contents": "#",
         "isBlack": true,
         "number": "",
@@ -78,7 +69,54 @@
       },
       {
         "row": 1,
+        "col": 2,
+        "contents": "P",
+        "isBlack": false,
+        "number": "5",
+        "acrossNumber": 1,
+        "downNumber": 5
+      },
+      {
+        "row": 1,
         "col": 3,
+        "contents": "A",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": 4
+      },
+      {
+        "row": 1,
+        "col": 4,
+        "contents": "S",
+        "isBlack": false,
+        "number": "6",
+        "acrossNumber": 1,
+        "downNumber": 6
+      }
+    ],
+    [
+      {
+        "row": 2,
+        "col": 0,
+        "contents": "E",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 3
+      },
+      {
+        "row": 2,
+        "col": 1,
+        "contents": "#",
+        "isBlack": true,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": ""
+      },
+      {
+        "row": 2,
+        "col": 2,
         "contents": "E",
         "isBlack": false,
         "number": "",
@@ -86,19 +124,8 @@
         "downNumber": 5
       },
       {
-        "row": 1,
-        "col": 4,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
-      }
-    ],
-    [
-      {
         "row": 2,
-        "col": 0,
+        "col": 3,
         "contents": "#",
         "isBlack": true,
         "number": "",
@@ -107,133 +134,106 @@
       },
       {
         "row": 2,
-        "col": 1,
-        "contents": "M",
+        "col": 4,
+        "contents": "N",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 6
+      }
+    ],
+    [
+      {
+        "row": 3,
+        "col": 0,
+        "contents": "D",
         "isBlack": false,
         "number": "2",
         "acrossNumber": 2,
-        "downNumber": 4
-      },
-      {
-        "row": 2,
-        "col": 2,
-        "contents": "S",
-        "isBlack": false,
-        "number": "",
-        "acrossNumber": 2,
-        "downNumber": ""
-      },
-      {
-        "row": 2,
-        "col": 3,
-        "contents": "T",
-        "isBlack": false,
-        "number": "",
-        "acrossNumber": 2,
-        "downNumber": 5
-      },
-      {
-        "row": 2,
-        "col": 4,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
-      }
-    ],
-    [
-      {
-        "row": 3,
-        "col": 0,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
+        "downNumber": 3
       },
       {
         "row": 3,
         "col": 1,
-        "contents": "M",
+        "contents": "U",
         "isBlack": false,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": 4
+        "number": "7",
+        "acrossNumber": 2,
+        "downNumber": 7
       },
       {
         "row": 3,
         "col": 2,
-        "contents": "#",
-        "isBlack": true,
-        "number": "",
-        "acrossNumber": "",
-        "downNumber": ""
-      },
-      {
-        "row": 3,
-        "col": 3,
-        "contents": "A",
+        "contents": "E",
         "isBlack": false,
         "number": "",
-        "acrossNumber": "",
+        "acrossNumber": 2,
         "downNumber": 5
       },
       {
         "row": 3,
-        "col": 4,
+        "col": 3,
         "contents": "#",
         "isBlack": true,
         "number": "",
         "acrossNumber": "",
         "downNumber": ""
+      },
+      {
+        "row": 3,
+        "col": 4,
+        "contents": "U",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": "",
+        "downNumber": 6
       }
     ],
     [
       {
         "row": 4,
         "col": 0,
-        "contents": "T",
-        "isBlack": false,
-        "number": "3",
-        "acrossNumber": 3,
+        "contents": "#",
+        "isBlack": true,
+        "number": "",
+        "acrossNumber": "",
         "downNumber": ""
       },
       {
         "row": 4,
         "col": 1,
-        "contents": "A",
+        "contents": "H",
         "isBlack": false,
         "number": "",
-        "acrossNumber": 3,
-        "downNumber": 4
+        "acrossNumber": "",
+        "downNumber": 7
       },
       {
         "row": 4,
         "col": 2,
-        "contents": "T",
-        "isBlack": false,
+        "contents": "#",
+        "isBlack": true,
         "number": "",
-        "acrossNumber": 3,
+        "acrossNumber": "",
         "downNumber": ""
       },
       {
         "row": 4,
         "col": 3,
-        "contents": "T",
-        "isBlack": false,
+        "contents": "#",
+        "isBlack": true,
         "number": "",
-        "acrossNumber": 3,
-        "downNumber": 5
+        "acrossNumber": "",
+        "downNumber": ""
       },
       {
         "row": 4,
         "col": 4,
-        "contents": "Y",
+        "contents": "B",
         "isBlack": false,
         "number": "",
-        "acrossNumber": 3,
-        "downNumber": ""
+        "acrossNumber": "",
+        "downNumber": 6
       }
     ]
   ],
@@ -241,28 +241,20 @@
     "across": [
       {
         "number": 1,
-        "length": 5,
-        "clue": "The Ambac Financial Group, Inc., generally known as Ambac (originally the American Municipal Bond Assurance Corporation), is an American holding company.  ",
-        "answer": "AMBAC",
+        "length": 3,
+        "clue": "(now rare) The right of going foremost; precedence. ",
+        "answer": "PAS",
         "positions": [
           {
-            "row": 0,
-            "col": 0
-          },
-          {
-            "row": 0,
-            "col": 1
-          },
-          {
-            "row": 0,
+            "row": 1,
             "col": 2
           },
           {
-            "row": 0,
+            "row": 1,
             "col": 3
           },
           {
-            "row": 0,
+            "row": 1,
             "col": 4
           }
         ]
@@ -270,106 +262,122 @@
       {
         "number": 2,
         "length": 3,
-        "clue": "(fandom slang) To mock a work (typically a fanfic) by inserting satirical commentary. ",
-        "answer": "MST",
+        "clue": "Owed or owing. ",
+        "answer": "DUE",
         "positions": [
           {
-            "row": 2,
-            "col": 1
-          },
-          {
-            "row": 2,
-            "col": 2
-          },
-          {
-            "row": 2,
-            "col": 3
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "length": 5,
-        "clue": "(Scotland, Northern England, Geordie) A potato. ",
-        "answer": "TATTY",
-        "positions": [
-          {
-            "row": 4,
+            "row": 3,
             "col": 0
           },
           {
-            "row": 4,
+            "row": 3,
             "col": 1
           },
           {
-            "row": 4,
+            "row": 3,
             "col": 2
-          },
-          {
-            "row": 4,
-            "col": 3
-          },
-          {
-            "row": 4,
-            "col": 4
           }
         ]
       }
     ],
     "down": [
       {
-        "number": 4,
-        "length": 5,
-        "clue": "(US, colloquial) Mother ",
-        "answer": "MOMMA",
+        "number": 3,
+        "length": 4,
+        "clue": "Filled with awe. ",
+        "answer": "AWED",
         "positions": [
           {
             "row": 0,
-            "col": 1
+            "col": 0
           },
           {
             "row": 1,
-            "col": 1
+            "col": 0
           },
           {
             "row": 2,
-            "col": 1
+            "col": 0
           },
           {
             "row": 3,
-            "col": 1
+            "col": 0
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "length": 2,
+        "clue": "(music) A syllable used in solfège to represent the fourth diatonic (or sixth chromatic) note of a major scale. ",
+        "answer": "FA",
+        "positions": [
+          {
+            "row": 0,
+            "col": 3
           },
           {
-            "row": 4,
-            "col": 1
+            "row": 1,
+            "col": 3
           }
         ]
       },
       {
         "number": 5,
-        "length": 5,
-        "clue": "(formal) Aged; at the age of. ",
-        "answer": "AETAT",
+        "length": 3,
+        "clue": "(informal, chiefly Canada, US, Australia) Urine. ",
+        "answer": "PEE",
         "positions": [
           {
-            "row": 0,
-            "col": 3
-          },
-          {
             "row": 1,
-            "col": 3
+            "col": 2
           },
           {
             "row": 2,
-            "col": 3
+            "col": 2
           },
           {
             "row": 3,
-            "col": 3
+            "col": 2
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "length": 4,
+        "clue": "Conspicuously short. ",
+        "answer": "SNUB",
+        "positions": [
+          {
+            "row": 1,
+            "col": 4
+          },
+          {
+            "row": 2,
+            "col": 4
+          },
+          {
+            "row": 3,
+            "col": 4
           },
           {
             "row": 4,
-            "col": 3
+            "col": 4
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "length": 2,
+        "clue": "An occurrence of the interjection \"uh\". ",
+        "answer": "UH",
+        "positions": [
+          {
+            "row": 3,
+            "col": 1
+          },
+          {
+            "row": 4,
+            "col": 1
           }
         ]
       }
@@ -378,73 +386,85 @@
   "solution": [
     [
       "A",
-      "M",
-      "B",
-      "A",
-      "C"
+      "#",
+      "#",
+      "F",
+      "#"
     ],
     [
+      "W",
       "#",
-      "O",
+      "P",
+      "A",
+      "S"
+    ],
+    [
+      "E",
       "#",
       "E",
-      "#"
+      "#",
+      "N"
+    ],
+    [
+      "D",
+      "U",
+      "E",
+      "#",
+      "U"
     ],
     [
       "#",
-      "M",
-      "S",
-      "T",
-      "#"
-    ],
-    [
+      "H",
       "#",
-      "M",
       "#",
-      "A",
-      "#"
-    ],
-    [
-      "T",
-      "A",
-      "T",
-      "T",
-      "Y"
+      "B"
     ]
   ],
   "clues": {
     "across": [
       {
         "number": 1,
-        "clue": "The Ambac Financial Group, Inc., generally known as Ambac (originally the American Municipal Bond Assurance Corporation), is an American holding company.  ",
-        "length": 5,
-        "answer": "AMBAC"
+        "clue": "(now rare) The right of going foremost; precedence. ",
+        "length": 3,
+        "answer": "PAS"
       },
       {
         "number": 2,
-        "clue": "(fandom slang) To mock a work (typically a fanfic) by inserting satirical commentary. ",
+        "clue": "Owed or owing. ",
         "length": 3,
-        "answer": "MST"
-      },
-      {
-        "number": 3,
-        "clue": "(Scotland, Northern England, Geordie) A potato. ",
-        "length": 5,
-        "answer": "TATTY"
+        "answer": "DUE"
       }
     ],
     "down": [
       {
+        "number": 3,
+        "clue": "Filled with awe. ",
+        "length": 4,
+        "answer": "AWED"
+      },
+      {
         "number": 4,
-        "clue": "(US, colloquial) Mother ",
-        "length": 5,
-        "answer": "MOMMA"
+        "clue": "(music) A syllable used in solfège to represent the fourth diatonic (or sixth chromatic) note of a major scale. ",
+        "length": 2,
+        "answer": "FA"
       },
       {
         "number": 5,
-        "clue": "(formal) Aged; at the age of. ",
-        "length": 5,
-        "answer": "AETAT"
+        "clue": "(informal, chiefly Canada, US, Australia) Urine. ",
+        "length": 3,
+        "answer": "PEE"
+      },
+      {
+        "number": 6,
+        "clue": "Conspicuously short. ",
+        "length": 4,
+        "answer": "SNUB"
+      },
+      {
+        "number": 7,
+        "clue": "An occurrence of the interjection \"uh\". ",
+        "length": 2,
+        "answer": "UH"
       }
     ]
   }
