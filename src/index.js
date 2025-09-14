@@ -553,7 +553,10 @@ function generateHTML(puzzleData) {
         color: #535353;
         font-family: "Libre Franklin", sans-serif;
         font-weight: 700;
-        font-size: 6rem;
+        font-size: 4rem;
+        line-height: 1.1;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       
       .pronunciation {
@@ -696,6 +699,14 @@ function generateHTML(puzzleData) {
           padding: 10px;
         }
         
+        .title-word {
+          font-size: 3rem;
+        }
+        
+        .pronunciation {
+          font-size: 1rem;
+        }
+        
         .clue-text {
           font-size: 1.4rem;
           padding: 15px;
@@ -731,6 +742,14 @@ function generateHTML(puzzleData) {
       }
 
       @media screen and (max-width: 480px) {
+        .title-word {
+          font-size: 2.5rem;
+        }
+        
+        .pronunciation {
+          font-size: 0.9rem;
+        }
+        
         .clue-text {
           font-size: 1.2rem;
           padding: 12px;
@@ -750,6 +769,14 @@ function generateHTML(puzzleData) {
       }
 
       @media screen and (max-width: 360px) {
+        .title-word {
+          font-size: 2rem;
+        }
+        
+        .pronunciation {
+          font-size: 0.8rem;
+        }
+        
         .clue-text {
           font-size: 1rem;
           padding: 10px;
