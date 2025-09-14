@@ -331,6 +331,21 @@
           width: 30rem;
         }
       }
+      
+      /* Override any Tailwind CSS defaults for table borders */
+      #puzzleGrid,
+      #puzzleGrid td,
+      #puzzleGrid th,
+      table#puzzleGrid,
+      table#puzzleGrid td,
+      table#puzzleGrid th {
+        border-color: #535353 !important;
+      }
+      
+      /* Ensure all table cells have the correct border */
+      #puzzleGrid td {
+        border: 1px solid #535353 !important;
+      }
     </style>
   </head>
   <body>
@@ -339,7 +354,7 @@
         <h1>
           <span class="title-word">nanoword</span>
         </h1>
-        <div class="pronunciation">/næn.oʊ-/</div>
+        <div class="pronunciation">/næn.oʊ-wɜː(r)d/</div>
         <div class="puzzle-date" id="puzzleDate">Loading...</div>
       </div>
 
@@ -524,7 +539,7 @@
             const cellData = grid[i][j];
             
             if (cellData.isBlack) {
-              cell.style.backgroundColor = 'black';
+              cell.style.backgroundColor = '#535353';
             } else {
               cell.innerHTML = `
                 <div class="number">${cellData.number || ''}</div>
@@ -744,7 +759,7 @@
             if (!grid[i][j].isBlack) {
               const cell = document.querySelector(`tr[id="${i}"] td:nth-child(${j + 1})`);
               cell.children[1].textContent = '';
-              cell.style.border = '1px solid black';
+              cell.style.border = '1px solid #535353';
             }
           }
         }
