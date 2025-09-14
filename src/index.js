@@ -7,6 +7,28 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
+    // Handle share API: POST /api/share
+    if (url.pathname === '/api/share') {
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type'
+          }
+        });
+      }
+      if (request.method === 'POST') {
+        return handleShareAPI(request, env);
+      }
+    }
+    
+    // Handle share routes: /share/YYYY-MM-DD/UUID
+    const shareMatch = url.pathname.match(/^\/share\/(\d{4}-\d{2}-\d{2})\/([a-f0-9-]{36})$/);
+    if (shareMatch) {
+      return handleSharePage(shareMatch[1], shareMatch[2], env);
+    }
+    
     // Only serve the daily puzzle at the root path
     if (url.pathname === '/' || url.pathname === '') {
       return handleDailyPuzzle(request, env);
@@ -16,6 +38,105 @@ export default {
     return Response.redirect(url.origin, 301);
   }
 };
+
+async function handleShareAPI(request, env) {
+  try {
+    console.log('Share API called');
+    const body = await request.json();
+    console.log('Request body:', body);
+    const { shareId, shareData } = body;
+    
+    if (!shareId || !shareData) {
+      console.error('Missing shareId or shareData:', { shareId, shareData });
+      return new Response('Missing shareId or shareData', { status: 400 });
+    }
+    
+    // Validate shareId format (UUID)
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(shareId)) {
+      console.error('Invalid shareId format:', shareId);
+      return new Response('Invalid shareId format', { status: 400 });
+    }
+    
+    // Store in KV with expiration (30 days)
+    const shareKey = `share-${shareData.date}-${shareId}`;
+    console.log('Storing share with key:', shareKey);
+    console.log('Share data to store:', shareData);
+    
+    await env.PUZZLES.put(shareKey, JSON.stringify(shareData), {
+      expirationTtl: 30 * 24 * 60 * 60 // 30 days
+    });
+    
+    console.log('Share stored successfully');
+    return new Response(JSON.stringify({ success: true, shareKey }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error handling share API:', error);
+    return new Response(JSON.stringify({ error: error.message }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleSharePage(date, shareId, env) {
+  try {
+    console.log('Share page requested:', { date, shareId });
+    
+    // Get share data from KV
+    const shareKey = `share-${date}-${shareId}`;
+    console.log('Looking for share key:', shareKey);
+    
+    const shareData = await env.PUZZLES.get(shareKey, 'json');
+    console.log('Share data found:', shareData);
+    
+    if (!shareData) {
+      console.error('Share not found for key:', shareKey);
+      return new Response(generateErrorHTML('Share not found'), {
+        status: 404,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8'
+        }
+      });
+    }
+    
+    // Get the original puzzle data
+    const puzzleKey = `puzzle-${date}`;
+    const puzzleData = await env.PUZZLES.get(puzzleKey, 'json');
+    
+    if (!puzzleData) {
+      return new Response(generateErrorHTML('Puzzle not found'), {
+        status: 404,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8'
+        }
+      });
+    }
+    
+    // Return the share page HTML
+    return new Response(generateShareHTML(shareData, puzzleData), {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400' // Cache for 24 hours
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error handling share page:', error);
+    return new Response(generateErrorHTML('Error loading share'), {
+      status: 500,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8'
+      }
+    });
+  }
+}
 
 async function handleDailyPuzzle(request, env) {
   try {
@@ -659,12 +780,35 @@ function generateHTML(puzzleData) {
       }
       
       .message h2 {
-        font-family: "Micro 5", monospace;
+        font-family: "Libre Baskerville", serif;
         font-size: 2.1rem;
         font-weight: normal;
         color: #535353;
-        margin: 0;
+        margin: 0 0 20px 0;
         line-height: 1.4;
+      }
+      
+      .share-button {
+        background: linear-gradient(rgb(1, 94, 89), rgb(1, 67, 70));
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-family: "Libre Baskerville", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: none;
+      }
+      
+      .share-button:hover {
+        background: linear-gradient(rgb(1, 77, 73), rgb(1, 49, 51));
+        transform: translateY(-1px);
+      }
+      
+      .share-button:active {
+        transform: translateY(0);
       }
       
       /* Override any potential Tailwind or browser defaults */
@@ -966,6 +1110,7 @@ function generateHTML(puzzleData) {
 
       <div class="message" id="completionMessage" style="display: none;">
         <h2 id="completionText">Success!</h2>
+        <button id="shareBtn" class="share-button">Share Result</button>
       </div>
     </div>
 
@@ -1070,6 +1215,131 @@ function generateHTML(puzzleData) {
 
       function clearProgress() {
         localStorage.removeItem(getPuzzleStorageKey());
+      }
+
+      function generateShareId() {
+        // Generate a UUID v4
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+
+      async function shareResult() {
+        try {
+          const completionText = document.getElementById('completionText').textContent;
+          const date = puzzleData.date;
+          const currentTime = document.getElementById('timer').textContent;
+          const hintsUsed = hintCount;
+          const isRevealed = completionText.includes('revealed');
+          
+          // Generate share ID and prepare share data
+          const shareId = generateShareId();
+          const shareData = {
+            date: date,
+            time: currentTime,
+            hints: hintsUsed,
+            isRevealed: isRevealed,
+            createdAt: new Date().toISOString()
+          };
+          
+          // Store share data in KV via API call
+          console.log('Creating share with ID:', shareId, 'and data:', shareData);
+          
+          const response = await fetch('/api/share', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              shareId: shareId,
+              shareData: shareData
+            })
+          });
+          
+          const responseData = await response.json();
+          console.log('Share API response:', responseData);
+          
+          if (!response.ok) {
+            throw new Error(\`Failed to create share: \${responseData.error || response.statusText}\`);
+          }
+          
+          // Generate share URL
+          const shareUrl = \`\${window.location.origin}/share/\${date}/\${shareId}\`;
+          
+          // Check if Web Share API is available
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: \`nanoword \${date} - \${isRevealed ? 'REVEALED' : 'SOLVED'}\`,
+                text: \`I \${isRevealed ? 'revealed' : 'solved'} today's nanoword puzzle in \${currentTime}!\`,
+                url: shareUrl
+              });
+            } catch (err) {
+              // User cancelled or error occurred, fall back to clipboard
+              if (err.name !== 'AbortError') {
+                copyToClipboard(shareUrl);
+              }
+            }
+          } else {
+            // Fallback to clipboard
+            copyToClipboard(shareUrl);
+          }
+        } catch (error) {
+          console.error('Error sharing result:', error);
+          showShareFeedback('Failed to create share. Please try again.');
+        }
+      }
+
+      async function copyToClipboard(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+            showShareFeedback('Copied to clipboard!');
+          } else {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showShareFeedback('Copied to clipboard!');
+          }
+        } catch (err) {
+          console.error('Failed to copy to clipboard:', err);
+          showShareFeedback('Failed to copy. Please try again.');
+        }
+      }
+
+      function showShareFeedback(message) {
+        // Create temporary feedback element
+        const feedback = document.createElement('div');
+        feedback.textContent = message;
+        feedback.style.cssText = \`
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #4caf50;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 6px;
+          z-index: 1000;
+          font-family: "Libre Baskerville", serif;
+          font-size: 0.9rem;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        \`;
+        
+        document.body.appendChild(feedback);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+          if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+          }
+        }, 3000);
       }
 
       function disablePuzzleInputs() {
@@ -1486,6 +1756,7 @@ function generateHTML(puzzleData) {
         document.getElementById('checkBtn').addEventListener('click', checkSolution);
         document.getElementById('clearBtn').addEventListener('click', clearGrid);
         document.getElementById('revealBtn').addEventListener('click', revealSolution);
+        document.getElementById('shareBtn').addEventListener('click', shareResult);
       }
       
       function useHint() {
@@ -1572,7 +1843,7 @@ function generateHTML(puzzleData) {
 </html>`;
 }
 
-function generateErrorHTML() {
+function generateErrorHTML(errorMessage) {
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -1583,8 +1854,181 @@ function generateErrorHTML() {
   <body>
     <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
       <h1>nanoword</h1>
-      <h2>❌ Error loading puzzle</h2>
-      <p>Sorry, there was an error loading today's puzzle. Please try again later.</p>
+      <h2>❌ ${errorMessage || 'Error loading puzzle'}</h2>
+      <p>Sorry, there was an error. Please try again later.</p>
+    </div>
+  </body>
+</html>`;
+}
+
+function generateShareHTML(shareData, puzzleData) {
+  const statusEmoji = shareData.isRevealed ? '🔍' : '✅';
+  const statusText = shareData.isRevealed ? 'REVEALED' : 'SOLVED';
+  
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Micro+5&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>nanoword ${shareData.date} - Shared Result</title>
+    <meta property="og:title" content="nanoword ${shareData.date} - ${statusText}" />
+    <meta property="og:description" content="I ${shareData.isRevealed ? 'revealed' : 'solved'} today's nanoword puzzle in ${shareData.time}!" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="nanoword ${shareData.date} - ${statusText}" />
+    <meta name="twitter:description" content="I ${shareData.isRevealed ? 'revealed' : 'solved'} today's nanoword puzzle in ${shareData.time}!" />
+    <style>
+      body {
+        font-family: "Micro 5", monospace;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .share-container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      }
+      
+      .title {
+        font-family: "Tiny5", monospace;
+        font-size: 3rem;
+        color: #535353;
+        margin-bottom: 20px;
+      }
+      
+      .status {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        color: ${shareData.isRevealed ? '#f57c00' : '#4caf50'};
+      }
+      
+      .puzzle-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 30px;
+        margin: 30px 0;
+      }
+      
+      .clue {
+        font-family: "Libre Baskerville", serif;
+        font-size: 1.4rem;
+        color: #535353;
+        margin-bottom: 15px;
+        font-style: italic;
+      }
+      
+      .answer {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #535353;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+      }
+      
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin: 30px 0;
+        flex-wrap: wrap;
+      }
+      
+      .stat {
+        text-align: center;
+      }
+      
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #535353;
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+      }
+      
+      .play-button {
+        background: linear-gradient(rgb(1, 94, 89), rgb(1, 67, 70));
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-family: "Libre Baskerville", serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+      }
+      
+      .play-button:hover {
+        background: linear-gradient(rgb(1, 77, 73), rgb(1, 49, 51));
+        transform: translateY(-1px);
+      }
+      
+      @media (max-width: 600px) {
+        .share-container {
+          padding: 20px;
+        }
+        
+        .title {
+          font-size: 2rem;
+        }
+        
+        .stats {
+          gap: 20px;
+        }
+        
+        .clue {
+          font-size: 1.2rem;
+        }
+        
+        .answer {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="share-container">
+      <h1 class="title">nanoword</h1>
+      <div class="status">${statusEmoji} ${statusText}</div>
+      
+      <div class="puzzle-info">
+        <div class="clue">"${puzzleData.clues.across[0].clue}"</div>
+        <div class="answer">${puzzleData.clues.across[0].answer}</div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">⏱️ ${shareData.time}</div>
+          <div class="stat-label">Time</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">💡 ${shareData.hints}</div>
+          <div class="stat-label">Hints Used</div>
+        </div>
+      </div>
+      
+      <a href="/" class="play-button">Play Today's Puzzle</a>
     </div>
   </body>
 </html>`;
