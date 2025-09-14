@@ -287,7 +287,7 @@ function generateHTML(puzzleData) {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 20px;
+        gap: 10px;
         margin: 20px 0;
         padding: 15px 0;
         border-top: 1px solid #535353;
@@ -295,46 +295,55 @@ function generateHTML(puzzleData) {
         background: transparent;
         box-shadow: none;
         width: 100%;
+        flex-wrap: wrap;
       }
       
       .timer-container {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
+        flex-shrink: 0;
+        min-width: 0;
       }
       
       .timer-label {
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: #666;
+        white-space: nowrap;
       }
       
       .timer-display {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: bold;
         color: #1976d2;
+        white-space: nowrap;
       }
       
       .hint-counter {
         display: flex;
         align-items: center;
-        gap: 5px;
-        margin-left: 20px;
+        gap: 3px;
+        margin-left: 10px;
+        flex-shrink: 0;
+        min-width: 0;
       }
       
       .hint-label {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: #666;
+        white-space: nowrap;
       }
       
       #hintCount {
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: bold;
         color: #f57c00;
         background-color: #fff3e0;
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 4px;
-        min-width: 20px;
+        min-width: 18px;
         text-align: center;
+        white-space: nowrap;
       }
       
       .btn {
@@ -572,16 +581,21 @@ function generateHTML(puzzleData) {
         background: none !important;
         border: none !important;
         color: #535353;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 700;
         cursor: pointer;
-        padding: 10px 15px;
+        padding: 8px 12px;
         text-decoration: none;
         font-family: "Libre Franklin", sans-serif;
         box-shadow: none !important;
         text-shadow: none !important;
         filter: none !important;
         transition: color 0.3s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+        flex-shrink: 1;
       }
       
       .text-button:hover {
@@ -707,6 +721,25 @@ function generateHTML(puzzleData) {
           font-size: 1rem;
         }
         
+        .controls {
+          flex-direction: column;
+          gap: 15px;
+          align-items: stretch;
+        }
+        
+        .timer-container {
+          justify-content: center;
+          margin-bottom: 10px;
+        }
+        
+        .text-button {
+          font-size: 1rem;
+          padding: 6px 10px;
+          max-width: none;
+          flex: 1;
+          text-align: center;
+        }
+        
         .clue-text {
           font-size: 1.4rem;
           padding: 15px;
@@ -748,6 +781,37 @@ function generateHTML(puzzleData) {
         
         .pronunciation {
           font-size: 0.9rem;
+        }
+        
+        .controls {
+          gap: 10px;
+          padding: 10px 0;
+        }
+        
+        .timer-container {
+          gap: 3px;
+        }
+        
+        .timer-label {
+          font-size: 0.8rem;
+        }
+        
+        .timer-display {
+          font-size: 1rem;
+        }
+        
+        .hint-label {
+          font-size: 0.7rem;
+        }
+        
+        #hintCount {
+          font-size: 0.8rem;
+          padding: 1px 4px;
+        }
+        
+        .text-button {
+          font-size: 0.9rem;
+          padding: 5px 8px;
         }
         
         .clue-text {
