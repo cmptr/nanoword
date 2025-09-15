@@ -92,4 +92,4 @@ Thumbs.db
 
 # Temporary files
 *.tmp
-*.temp
+*.temp.svelte-kit/

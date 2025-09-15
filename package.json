@@ -1,45 +1,45 @@
 {
   "name": "nanoword",
   "version": "1.0.0",
-  "description": "Daily crossword puzzle generator CLI",
-  "main": "daily-puzzle.js",
-  "bin": {
-    "nanowords-daily": "./daily-puzzle.js"
-  },
+  "description": "Daily crossword puzzle game built with SvelteKit",
+  "type": "module",
   "scripts": {
-    "start": "node daily-puzzle.js",
-    "generate": "node daily-puzzle.js generate",
-    "solve": "node daily-puzzle.js solve",
-    "show": "node daily-puzzle.js show",
-    "list": "node daily-puzzle.js list",
-    "serve": "node serve-daily.js",
-    "demo": "node example-usage.js",
-    "dev": "node index.js",
-    "dev-refactored": "node refactoredIndex.js",
-    "deploy": "wrangler deploy",
-    "dev-worker": "wrangler dev",
+    "dev": "wrangler dev --compatibility-date=2024-01-15",
+    "dev:local": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:full": "./scripts/deploy.sh",
     "kv:create": "wrangler kv namespace create PUZZLES",
     "kv:list": "wrangler kv key list --namespace-id=0a6922f1a0a44521bc48c23e69322b4f",
     "kv:populate": "node scripts/populate-kv.js populate",
     "kv:list-contents": "node scripts/populate-kv.js list",
     "kv:setup": "node scripts/setup-kv.js create",
-    "kv:list-namespaces": "node scripts/setup-kv.js list",
-    "test:worker": "node scripts/test-worker.js",
-    "deploy:full": "./scripts/deploy.sh",
-    "deploy-daily": "node scripts/deploy-daily.js"
+    "kv:list-namespaces": "node scripts/setup-kv.js list"
   },
-  "keywords": ["crossword", "puzzle", "daily", "cli"],
+  "keywords": ["crossword", "puzzle", "daily", "sveltekit", "svelte"],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "node-fetch": "^2.7.0",
-    "chalk": "^4.1.2",
-    "readline-sync": "^1.4.10"
-  },
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "@sveltejs/adapter-cloudflare-workers": "^2.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "daisyui": "^4.12.14",
+    "postcss": "^8.4.32",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.3",
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
