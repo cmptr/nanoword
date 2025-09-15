@@ -40,18 +40,24 @@
 	let fontSize = $derived(Math.floor(cellSize * 0.6));
 
 	function getCellCheckClass(index) {
+		console.log(`Getting class for cell ${index}, showingCheckResults: ${showingCheckResults}`);
 		if (!showingCheckResults) return '';
 		
 		const solution = puzzleData.solution[0];
 		const userValue = gameState.userInput[index];
 		const correctValue = solution[index];
 		
+		console.log(`Cell ${index}: user="${userValue}", correct="${correctValue}"`);
+		
 		if (userValue === correctValue && userValue !== '') {
-			return 'bg-green-100 border-green-300'; // Correct - pale green
+			console.log(`Cell ${index}: correct - returning green`);
+			return '!bg-green-100 !border-green-300';
 		} else if (userValue !== '' && userValue !== correctValue) {
-			return 'bg-red-100 border-red-300'; // Incorrect - pale red  
+			console.log(`Cell ${index}: incorrect - returning red`);
+			return '!bg-red-100 !border-red-300';
 		} else if (userValue === '') {
-			return 'bg-red-50 border-red-200'; // Missing - very pale red
+			console.log(`Cell ${index}: empty - returning pale red`);
+			return '!bg-red-50 !border-red-200';
 		}
 		return '';
 	}

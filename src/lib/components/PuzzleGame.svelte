@@ -46,7 +46,14 @@
 			hintRevealed: gameState.hintRevealed
 		};
 
-		cleanupOldPuzzleStorage();
+		console.log('Saving progress:', { 
+			elapsedTime: progress.elapsedTime, 
+			startTime: gameState.startTime,
+			isTimerRunning: gameState.isTimerRunning,
+			key: getPuzzleStorageKey()
+		});
+
+		// cleanupOldPuzzleStorage(); // Temporarily disabled to debug timer reset
 		localStorage.setItem(getPuzzleStorageKey(), JSON.stringify(progress));
 	}
 
@@ -67,28 +74,35 @@
 
 	function loadProgress() {
 		const savedProgress = localStorage.getItem(getPuzzleStorageKey());
+		console.log('Loading progress for key:', getPuzzleStorageKey());
+		console.log('Found saved progress:', savedProgress);
+		
 		if (!savedProgress) return false;
 
 		try {
 			const progress = JSON.parse(savedProgress);
 			if (progress.date !== puzzleData.date) return false;
 
+			console.log('Restoring progress:', {
+				elapsedTime: progress.elapsedTime,
+				userInput: progress.userInput,
+				isCompleted: progress.isCompleted
+			});
+
 			gameState.userInput = progress.userInput || new Array(puzzleData.grid[0].length).fill('');
 			gameState.hintCount = progress.hintCount || 0;
 			gameState.hintRevealed = progress.hintRevealed || new Array(puzzleData.grid[0].length).fill(false);
+
+			// Restore timer state for all puzzles
+			if (progress.elapsedTime !== undefined) {
+				gameState.startTime = Date.now() - progress.elapsedTime;
+				console.log('Restored timer with startTime:', gameState.startTime);
+			}
 
 			if (progress.isCompleted) {
 				gameState.isCompleted = true;
 				gameState.completionText = progress.completionText || 'Success!';
 				gameState.isTimerRunning = false;
-				// For completed puzzles, set the timer to the final elapsed time
-				if (progress.elapsedTime !== undefined) {
-					gameState.startTime = Date.now() - progress.elapsedTime;
-				}
-			} else if (progress.elapsedTime !== undefined && progress.wasTimerRunning) {
-				// Only restore running timer for incomplete puzzles
-				gameState.startTime = Date.now() - progress.elapsedTime;
-				gameState.isTimerRunning = false; // Will be started in onMount if needed
 			}
 
 			return true;
@@ -157,11 +171,14 @@
 	}
 
 	function checkSolution() {
+		console.log('Check button clicked');
 		showingCheckResults = true;
+		console.log('showingCheckResults set to true');
 		
 		// Auto-hide check results after 3 seconds
 		setTimeout(() => {
 			showingCheckResults = false;
+			console.log('Check results hidden');
 		}, 3000);
 		
 		// Check if complete
@@ -172,6 +189,7 @@
 				correct++;
 			}
 		}
+		console.log(`Correct letters: ${correct}/${solution.length}`);
 
 		if (correct === solution.length) {
 			showingCheckResults = false;
