@@ -1,41 +1,38 @@
-import { H as HYDRATION_ERROR, B as BOUNDARY_EFFECT, E as ERROR_VALUE, a as EFFECT_RAN, U as UNOWNED, M as MAYBE_DIRTY, C as CLEAN, D as DERIVED, b as DEV, I as INERT, c as EFFECT, A as ASYNC, d as BLOCK_EFFECT, e as DIRTY, f as BRANCH_EFFECT, R as ROOT_EFFECT, g as DESTROYED, h as INSPECT_EFFECT, S as STATE_SYMBOL, i as UNINITIALIZED, j as EFFECT_PRESERVED, k as HEAD_EFFECT, l as EFFECT_TRANSPARENT, m as STALE_REACTION, n as USER_EFFECT, o as DISCONNECTED, p as REACTION_IS_UPDATING, q as COMMENT_NODE, r as HYDRATION_START, s as HYDRATION_END, L as LEGACY_PROPS, t as render, u as push$1, v as setContext, w as pop$1 } from "./index2.js";
-import { d as define_property, r as run_all, a as deferred, o as object_prototype, b as array_prototype, g as get_descriptor, c as get_prototype_of, i as is_array, e as is_extensible, f as index_of, h as array_from } from "./utils2.js";
-import { s as safe_equals, e as equals } from "./equality.js";
+import { H as HYDRATION_ERROR, P as PROXY_PATH_SYMBOL, B as BOUNDARY_EFFECT, E as ERROR_VALUE, a as EFFECT_RAN, F as FILENAME, U as UNOWNED, M as MAYBE_DIRTY, C as CLEAN, d as derived_references_self, D as DERIVED, b as DEV, I as INERT, c as EFFECT, A as ASYNC, e as BLOCK_EFFECT, f as DIRTY, g as effect_update_depth_exceeded, h as BRANCH_EFFECT, R as ROOT_EFFECT, i as DESTROYED, j as INSPECT_EFFECT, s as state_unsafe_mutation, S as STATE_SYMBOL, k as state_prototype_fixed, l as UNINITIALIZED, m as state_descriptors_fixed, n as EFFECT_PRESERVED, o as HEAD_EFFECT, p as EFFECT_TRANSPARENT, q as STALE_REACTION, r as USER_EFFECT, t as DISCONNECTED, u as REACTION_IS_UPDATING, v as COMMENT_NODE, w as HYDRATION_START, x as HYDRATION_END, y as hydration_failed, z as snippet_without_render_tag, L as LEGACY_PROPS, G as render, J as push$1, K as setContext, N as pop$1 } from "./index.js";
+import { d as define_property, g as get_descriptor, r as run_all, a as deferred, s as safe_equals, e as equals, o as object_prototype, b as array_prototype, c as get_prototype_of, i as is_array, f as is_extensible, h as index_of, j as array_from } from "./equality.js";
 import "./environment.js";
 let public_env = {};
+let fix_stack_trace = (error) => error?.stack;
 function set_private_env(environment) {
 }
 function set_public_env(environment) {
   public_env = environment;
 }
-function effect_update_depth_exceeded() {
-  {
-    throw new Error(`https://svelte.dev/e/effect_update_depth_exceeded`);
-  }
-}
-function hydration_failed() {
-  {
-    throw new Error(`https://svelte.dev/e/hydration_failed`);
-  }
-}
-function state_descriptors_fixed() {
-  {
-    throw new Error(`https://svelte.dev/e/state_descriptors_fixed`);
-  }
-}
-function state_prototype_fixed() {
-  {
-    throw new Error(`https://svelte.dev/e/state_prototype_fixed`);
-  }
-}
-function state_unsafe_mutation() {
-  {
-    throw new Error(`https://svelte.dev/e/state_unsafe_mutation`);
-  }
-}
+var bold = "font-weight: bold";
+var normal = "font-weight: normal";
 function hydration_mismatch(location) {
   {
-    console.warn(`https://svelte.dev/e/hydration_mismatch`);
+    console.warn(
+      `%c[svelte] hydration_mismatch
+%c${"Hydration failed because the initial UI does not match what was rendered on the server"}
+https://svelte.dev/e/hydration_mismatch`,
+      bold,
+      normal
+    );
+  }
+}
+function lifecycle_double_unmount() {
+  {
+    console.warn(`%c[svelte] lifecycle_double_unmount
+%cTried to unmount a component that was not mounted
+https://svelte.dev/e/lifecycle_double_unmount`, bold, normal);
+  }
+}
+function state_proxy_equality_mismatch(operator) {
+  {
+    console.warn(`%c[svelte] state_proxy_equality_mismatch
+%cReactive \`$state(...)\` proxies and the values they proxy have different identities. Because of this, comparisons with \`${operator}\` will produce unexpected results
+https://svelte.dev/e/state_proxy_equality_mismatch`, bold, normal);
   }
 }
 let hydrating = false;
@@ -57,9 +54,60 @@ function hydrate_next() {
   );
 }
 let tracing_mode_flag = false;
+function get_stack(label) {
+  let error = Error();
+  const stack2 = error.stack;
+  if (!stack2) return null;
+  const lines = stack2.split("\n");
+  const new_lines = ["\n"];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line === "Error") {
+      continue;
+    }
+    if (line.includes("validate_each_keys")) {
+      return null;
+    }
+    if (line.includes("svelte/src/internal")) {
+      continue;
+    }
+    new_lines.push(line);
+  }
+  if (new_lines.length === 1) {
+    return null;
+  }
+  define_property(error, "stack", {
+    value: new_lines.join("\n")
+  });
+  define_property(error, "name", {
+    // 'Error' suffix is required for stack traces to be rendered properly
+    value: `${label}Error`
+  });
+  return (
+    /** @type {Error & { stack: string }} */
+    error
+  );
+}
+function tag(source2, label) {
+  source2.label = label;
+  tag_proxy(source2.v, label);
+  return source2;
+}
+function tag_proxy(value, label) {
+  value?.[PROXY_PATH_SYMBOL]?.(label);
+  return value;
+}
 let component_context = null;
 function set_component_context(context) {
   component_context = context;
+}
+let dev_stack = null;
+function set_dev_stack(stack2) {
+  dev_stack = stack2;
+}
+let dev_current_component_function = null;
+function set_dev_current_component_function(fn) {
+  dev_current_component_function = fn;
 }
 function push(props, runes = false, fn) {
   component_context = {
@@ -70,6 +118,10 @@ function push(props, runes = false, fn) {
     x: null,
     l: null
   };
+  {
+    component_context.function = fn;
+    dev_current_component_function = fn;
+  }
 }
 function pop(component) {
   var context = (
@@ -84,6 +136,9 @@ function pop(component) {
     }
   }
   component_context = context.p;
+  {
+    dev_current_component_function = component_context?.function ?? null;
+  }
   return (
     /** @type {T} */
     {}
@@ -98,6 +153,9 @@ function handle_error(error) {
   if (effect === null) {
     active_reaction.f |= ERROR_VALUE;
     return error;
+  }
+  if (error instanceof Error && !adjustments.has(error)) {
+    adjustments.set(error, get_adjustments(error, effect));
   }
   if ((effect.f & EFFECT_RAN) === 0) {
     if ((effect.f & BOUNDARY_EFFECT) === 0) {
@@ -127,6 +185,25 @@ function invoke_error_boundary(error, effect) {
     apply_adjustments(error);
   }
   throw error;
+}
+function get_adjustments(error, effect) {
+  const message_descriptor = get_descriptor(error, "message");
+  if (message_descriptor && !message_descriptor.configurable) return;
+  var indent = is_firefox ? "  " : "	";
+  var component_stack = `
+${indent}in ${effect.fn?.name || "<unknown>"}`;
+  var context = effect.ctx;
+  while (context !== null) {
+    component_stack += `
+${indent}in ${context.function?.[FILENAME].split("/").pop()}`;
+    context = context.p;
+  }
+  return {
+    message: error.message + `
+${component_stack}
+`,
+    stack: error.stack?.split("\n").filter((line) => !line.includes("svelte/src/internal")).join("\n")
+  };
 }
 function apply_adjustments(error) {
   const adjusted = adjustments.get(error);
@@ -171,6 +248,7 @@ function flush_tasks() {
     run_idle_tasks();
   }
 }
+const recent_async_deriveds = /* @__PURE__ */ new Set();
 function destroy_derived_effects(derived) {
   var effects = derived.effects;
   if (effects !== null) {
@@ -183,6 +261,7 @@ function destroy_derived_effects(derived) {
     }
   }
 }
+let stack = [];
 function get_derived_parent_effect(derived) {
   var parent = derived.parent;
   while (parent !== null) {
@@ -201,11 +280,19 @@ function execute_derived(derived) {
   var prev_active_effect = active_effect;
   set_active_effect(get_derived_parent_effect(derived));
   {
+    let prev_inspect_effects = inspect_effects;
+    set_inspect_effects(/* @__PURE__ */ new Set());
     try {
+      if (stack.includes(derived)) {
+        derived_references_self();
+      }
+      stack.push(derived);
       destroy_derived_effects(derived);
       value = update_reaction(derived);
     } finally {
       set_active_effect(prev_active_effect);
+      set_inspect_effects(prev_inspect_effects);
+      stack.pop();
     }
   }
   return value;
@@ -536,8 +623,22 @@ function flush_effects() {
     while (queued_root_effects.length > 0) {
       var batch = Batch.ensure();
       if (flush_count++ > 1e3) {
-        var updates, entry;
-        if (DEV) ;
+        if (DEV) {
+          var updates = /* @__PURE__ */ new Map();
+          for (const source2 of batch.current.keys()) {
+            for (const [stack2, update] of source2.updated ?? []) {
+              var entry = updates.get(stack2);
+              if (!entry) {
+                entry = { error: update.error, count: 0 };
+                updates.set(stack2, entry);
+              }
+              entry.count += update.count;
+            }
+          }
+          for (const update of updates.values()) {
+            console.error(update.error);
+          }
+        }
         infinite_loop_guard();
       }
       batch.process(queued_root_effects);
@@ -553,6 +654,9 @@ function infinite_loop_guard() {
   try {
     effect_update_depth_exceeded();
   } catch (error) {
+    {
+      define_property(error, "stack", { value: "" });
+    }
     invoke_error_boundary(error, last_scheduled_effect);
   }
 }
@@ -599,8 +703,16 @@ function schedule_effect(signal) {
   }
   queued_root_effects.push(effect);
 }
+let inspect_effects = /* @__PURE__ */ new Set();
 const old_values = /* @__PURE__ */ new Map();
-function source(v, stack) {
+function set_inspect_effects(v) {
+  inspect_effects = v;
+}
+let inspect_effects_deferred = false;
+function set_inspect_effects_deferred() {
+  inspect_effects_deferred = true;
+}
+function source(v, stack2) {
   var signal = {
     f: 0,
     // TODO ideally we could skip this altogether, but it causes type errors
@@ -613,7 +725,7 @@ function source(v, stack) {
   return signal;
 }
 // @__NO_SIDE_EFFECTS__
-function state(v, stack) {
+function state(v, stack2) {
   const s = source(v);
   push_reaction_value(s);
   return s;
@@ -633,6 +745,13 @@ function set(source2, value, should_proxy = false) {
     state_unsafe_mutation();
   }
   let new_value = should_proxy ? proxy(value) : value;
+  {
+    tag_proxy(
+      new_value,
+      /** @type {string} */
+      source2.label
+    );
+  }
   return internal_set(source2, new_value);
 }
 function internal_set(source2, value) {
@@ -646,6 +765,23 @@ function internal_set(source2, value) {
     source2.v = value;
     var batch = Batch.ensure();
     batch.capture(source2, old_value);
+    {
+      if (active_effect !== null) {
+        const error = get_stack("UpdatedAt");
+        if (error !== null) {
+          source2.updated ??= /* @__PURE__ */ new Map();
+          let entry = source2.updated.get(error.stack);
+          if (!entry) {
+            entry = { error, count: 0 };
+            source2.updated.set(error.stack, entry);
+          }
+          entry.count++;
+        }
+      }
+      if (active_effect !== null) {
+        source2.set_during_effect = true;
+      }
+    }
     if ((source2.f & DERIVED) !== 0) {
       if ((source2.f & DIRTY) !== 0) {
         execute_derived(
@@ -664,8 +800,24 @@ function internal_set(source2, value) {
         untracked_writes.push(source2);
       }
     }
+    if (inspect_effects.size > 0 && !inspect_effects_deferred) {
+      flush_inspect_effects();
+    }
   }
   return value;
+}
+function flush_inspect_effects() {
+  inspect_effects_deferred = false;
+  const inspects = Array.from(inspect_effects);
+  for (const effect of inspects) {
+    if ((effect.f & CLEAN) !== 0) {
+      set_signal_status(effect, MAYBE_DIRTY);
+    }
+    if (is_dirty(effect)) {
+      update_effect(effect);
+    }
+  }
+  inspect_effects.clear();
 }
 function increment(source2) {
   set(source2, source2.v + 1);
@@ -677,6 +829,10 @@ function mark_reactions(signal, status) {
   for (var i = 0; i < length; i++) {
     var reaction = reactions[i];
     var flags = reaction.f;
+    if ((flags & INSPECT_EFFECT) !== 0) {
+      inspect_effects.add(reaction);
+      continue;
+    }
     var not_dirty = (flags & DIRTY) === 0;
     if (not_dirty) {
       set_signal_status(reaction, status);
@@ -703,6 +859,7 @@ function mark_reactions(signal, status) {
     }
   }
 }
+const regex_is_valid_identifier = /^[a-zA-Z_$][a-zA-Z_$0-9]*$/;
 function proxy(value) {
   if (typeof value !== "object" || value === null || STATE_SYMBOL in value) {
     return value;
@@ -733,6 +890,25 @@ function proxy(value) {
       /** @type {any[]} */
       value.length
     ));
+    {
+      value = /** @type {any} */
+      inspectable_array(
+        /** @type {any[]} */
+        value
+      );
+    }
+  }
+  var path = "";
+  let updating = false;
+  function update_path(new_path) {
+    if (updating) return;
+    updating = true;
+    path = new_path;
+    tag(version, `${path} version`);
+    for (const [prop, source2] of sources) {
+      tag(source2, get_label(path, prop));
+    }
+    updating = false;
   }
   return new Proxy(
     /** @type {any} */
@@ -747,6 +923,9 @@ function proxy(value) {
           s = with_parent(() => {
             var s2 = /* @__PURE__ */ state(descriptor.value);
             sources.set(prop, s2);
+            if (typeof prop === "string") {
+              tag(s2, get_label(path, prop));
+            }
             return s2;
           });
         } else {
@@ -761,6 +940,9 @@ function proxy(value) {
             const s2 = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED));
             sources.set(prop, s2);
             increment(version);
+            {
+              tag(s2, get_label(path, prop));
+            }
           }
         } else {
           set(s, UNINITIALIZED);
@@ -772,12 +954,18 @@ function proxy(value) {
         if (prop === STATE_SYMBOL) {
           return value;
         }
+        if (prop === PROXY_PATH_SYMBOL) {
+          return update_path;
+        }
         var s = sources.get(prop);
         var exists = prop in target;
         if (s === void 0 && (!exists || get_descriptor(target, prop)?.writable)) {
           s = with_parent(() => {
             var p = proxy(exists ? target[prop] : UNINITIALIZED);
             var s2 = /* @__PURE__ */ state(p);
+            {
+              tag(s2, get_label(path, prop));
+            }
             return s2;
           });
           sources.set(prop, s);
@@ -818,6 +1006,9 @@ function proxy(value) {
             s = with_parent(() => {
               var p = has ? proxy(target[prop]) : UNINITIALIZED;
               var s2 = /* @__PURE__ */ state(p);
+              {
+                tag(s2, get_label(path, prop));
+              }
               return s2;
             });
             sources.set(prop, s);
@@ -841,12 +1032,18 @@ function proxy(value) {
             } else if (i in target) {
               other_s = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED));
               sources.set(i + "", other_s);
+              {
+                tag(other_s, get_label(path, i));
+              }
             }
           }
         }
         if (s === void 0) {
           if (!has || get_descriptor(target, prop)?.writable) {
             s = with_parent(() => /* @__PURE__ */ state(void 0));
+            {
+              tag(s, get_label(path, prop));
+            }
             set(s, proxy(value2));
             sources.set(prop, s);
           }
@@ -893,7 +1090,101 @@ function proxy(value) {
     }
   );
 }
+function get_label(path, prop) {
+  if (typeof prop === "symbol") return `${path}[Symbol(${prop.description ?? ""})]`;
+  if (regex_is_valid_identifier.test(prop)) return `${path}.${prop}`;
+  return /^\d+$/.test(prop) ? `${path}[${prop}]` : `${path}['${prop}']`;
+}
+function get_proxied_value(value) {
+  try {
+    if (value !== null && typeof value === "object" && STATE_SYMBOL in value) {
+      return value[STATE_SYMBOL];
+    }
+  } catch {
+  }
+  return value;
+}
+const ARRAY_MUTATING_METHODS = /* @__PURE__ */ new Set([
+  "copyWithin",
+  "fill",
+  "pop",
+  "push",
+  "reverse",
+  "shift",
+  "sort",
+  "splice",
+  "unshift"
+]);
+function inspectable_array(array) {
+  return new Proxy(array, {
+    get(target, prop, receiver) {
+      var value = Reflect.get(target, prop, receiver);
+      if (!ARRAY_MUTATING_METHODS.has(
+        /** @type {string} */
+        prop
+      )) {
+        return value;
+      }
+      return function(...args) {
+        set_inspect_effects_deferred();
+        var result = value.apply(this, args);
+        flush_inspect_effects();
+        return result;
+      };
+    }
+  });
+}
+function init_array_prototype_warnings() {
+  const array_prototype2 = Array.prototype;
+  const cleanup = Array.__svelte_cleanup;
+  if (cleanup) {
+    cleanup();
+  }
+  const { indexOf, lastIndexOf, includes } = array_prototype2;
+  array_prototype2.indexOf = function(item, from_index) {
+    const index = indexOf.call(this, item, from_index);
+    if (index === -1) {
+      for (let i = from_index ?? 0; i < this.length; i += 1) {
+        if (get_proxied_value(this[i]) === item) {
+          state_proxy_equality_mismatch("array.indexOf(...)");
+          break;
+        }
+      }
+    }
+    return index;
+  };
+  array_prototype2.lastIndexOf = function(item, from_index) {
+    const index = lastIndexOf.call(this, item, from_index ?? this.length - 1);
+    if (index === -1) {
+      for (let i = 0; i <= (from_index ?? this.length - 1); i += 1) {
+        if (get_proxied_value(this[i]) === item) {
+          state_proxy_equality_mismatch("array.lastIndexOf(...)");
+          break;
+        }
+      }
+    }
+    return index;
+  };
+  array_prototype2.includes = function(item, from_index) {
+    const has = includes.call(this, item, from_index);
+    if (!has) {
+      for (let i = 0; i < this.length; i += 1) {
+        if (get_proxied_value(this[i]) === item) {
+          state_proxy_equality_mismatch("array.includes(...)");
+          break;
+        }
+      }
+    }
+    return has;
+  };
+  Array.__svelte_cleanup = () => {
+    array_prototype2.indexOf = indexOf;
+    array_prototype2.lastIndexOf = lastIndexOf;
+    array_prototype2.includes = includes;
+  };
+}
 var $window;
+var is_firefox;
 var first_child_getter;
 var next_sibling_getter;
 function init_operations() {
@@ -901,6 +1192,7 @@ function init_operations() {
     return;
   }
   $window = window;
+  is_firefox = /Firefox/.test(navigator.userAgent);
   var element_prototype = Element.prototype;
   var node_prototype = Node.prototype;
   var text_prototype = Text.prototype;
@@ -915,6 +1207,10 @@ function init_operations() {
   }
   if (is_extensible(text_prototype)) {
     text_prototype.__t = void 0;
+  }
+  {
+    element_prototype.__svelte_meta = null;
+    init_array_prototype_warnings();
   }
 }
 function create_text(value = "") {
@@ -955,6 +1251,11 @@ function push_effect(effect, parent_effect) {
 }
 function create_effect(type, fn, sync, push2 = true) {
   var parent = active_effect;
+  {
+    while (parent !== null && (parent.f & INSPECT_EFFECT) !== 0) {
+      parent = parent.parent;
+    }
+  }
   if (parent !== null && (parent.f & INERT) !== 0) {
     type |= INERT;
   }
@@ -976,6 +1277,9 @@ function create_effect(type, fn, sync, push2 = true) {
     wv: 0,
     ac: null
   };
+  {
+    effect.component_function = dev_current_component_function;
+  }
   if (sync) {
     try {
       update_effect(effect);
@@ -1099,6 +1403,9 @@ function destroy_effect(effect, remove_dom = true) {
   var parent = effect.parent;
   if (parent !== null && parent.first !== null) {
     unlink_effect(effect);
+  }
+  {
+    effect.component_function = null;
   }
   effect.next = effect.prev = effect.teardown = effect.ctx = effect.deps = effect.fn = effect.nodes_start = effect.nodes_end = effect.ac = null;
 }
@@ -1433,6 +1740,15 @@ function update_effect(effect) {
   var was_updating_effect = is_updating_effect;
   active_effect = effect;
   is_updating_effect = true;
+  {
+    var previous_component_fn = dev_current_component_function;
+    set_dev_current_component_function(effect.component_function);
+    var previous_stack = (
+      /** @type {any} */
+      dev_stack
+    );
+    set_dev_stack(effect.dev_stack ?? dev_stack);
+  }
   try {
     if ((flags & BLOCK_EFFECT) !== 0) {
       destroy_block_effect_children(effect);
@@ -1448,6 +1764,10 @@ function update_effect(effect) {
   } finally {
     is_updating_effect = was_updating_effect;
     active_effect = previous_effect;
+    {
+      set_dev_current_component_function(previous_component_fn);
+      set_dev_stack(previous_stack);
+    }
   }
 }
 function get(signal) {
@@ -1489,6 +1809,9 @@ function get(signal) {
     if (parent !== null && (parent.f & UNOWNED) === 0) {
       derived.f ^= UNOWNED;
     }
+  }
+  {
+    recent_async_deriveds.delete(signal);
   }
   if (is_destroying_effect) {
     if (old_values.has(signal)) {
@@ -1782,7 +2105,17 @@ function unmount(component, options2) {
     mounted_components.delete(component);
     return fn(options2);
   }
+  {
+    lifecycle_double_unmount();
+  }
   return Promise.resolve();
+}
+function prevent_snippet_stringification(fn) {
+  fn.toString = () => {
+    snippet_without_render_tag();
+    return "";
+  };
+  return fn;
 }
 function asClassComponent$1(component) {
   return class extends Svelte4Component {
@@ -1905,8 +2238,9 @@ function asClassComponent(component) {
   component_constructor.render = _render;
   return component_constructor;
 }
+Root[FILENAME] = ".svelte-kit/generated/root.svelte";
 function Root($$payload, $$props) {
-  push$1();
+  push$1(Root);
   let {
     stores,
     page,
@@ -1931,11 +2265,11 @@ function Root($$payload, $$props) {
       data: data_0,
       form,
       params: page.params,
-      children: ($$payload2) => {
+      children: prevent_snippet_stringification(($$payload2) => {
         $$payload2.out.push(`<!---->`);
         Pyramid_1($$payload2, { data: data_1, form, params: page.params });
         $$payload2.out.push(`<!---->`);
-      },
+      }),
       $$slots: { default: true }
     });
     $$payload.out.push(`<!---->`);
@@ -1953,6 +2287,9 @@ function Root($$payload, $$props) {
   $$payload.out.push(`<!--]-->`);
   pop$1();
 }
+Root.render = function() {
+  throw new Error("Component.render(...) is no longer valid in Svelte 5. See https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes for more information");
+};
 const root = asClassComponent(Root);
 const options = {
   app_template_contains_nonce: false,
@@ -2055,7 +2392,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "pzq4nl"
+  version_hash: "1idro47"
 };
 async function get_hooks() {
   let handle;
@@ -2079,6 +2416,7 @@ export {
   set_public_env as a,
   set_read_implementation as b,
   set_manifest as c,
+  fix_stack_trace as f,
   get_hooks as g,
   options as o,
   public_env as p,

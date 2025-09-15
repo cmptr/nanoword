@@ -1,9 +1,5 @@
-import { y as getContext, w as pop, u as push } from "../../chunks/index2.js";
-import "../../chunks/state.svelte.js";
-import "@sveltejs/kit/internal";
-import "../../chunks/exports.js";
-import "../../chunks/utils.js";
-import { w as writable } from "../../chunks/index.js";
+import { V as getContext, J as push, O as push_element, T as pop_element, N as pop, F as FILENAME } from "../../chunks/index.js";
+import { s as stores } from "../../chunks/client.js";
 const CONTENT_REGEX = /[&<]/g;
 function escape_html(value, is_attr) {
   const str = String(value ?? "");
@@ -19,39 +15,46 @@ function escape_html(value, is_attr) {
   }
   return escaped + str.substring(last);
 }
-function create_updated_store() {
-  const { set, subscribe } = writable(false);
-  {
-    return {
-      subscribe,
-      // eslint-disable-next-line @typescript-eslint/require-await
-      check: async () => false
-    };
-  }
-}
-const stores = {
-  updated: /* @__PURE__ */ create_updated_store()
-};
 ({
   check: stores.updated.check
 });
 function context() {
   return getContext("__request__");
 }
+function context_dev(name) {
+  try {
+    return context();
+  } catch {
+    throw new Error(
+      `Can only read '${name}' on the server during rendering (not in e.g. \`load\` functions), as it is bound to the current request via component context. This prevents state from leaking between users.For more information, see https://svelte.dev/docs/kit/state-management#avoid-shared-state-on-the-server`
+    );
+  }
+}
 const page$1 = {
   get error() {
-    return context().page.error;
+    return context_dev("page.error").page.error;
   },
   get status() {
-    return context().page.status;
+    return context_dev("page.status").page.status;
   }
 };
 const page = page$1;
+Error$1[FILENAME] = "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/error.svelte";
 function Error$1($$payload, $$props) {
-  push();
-  $$payload.out.push(`<h1>${escape_html(page.status)}</h1> <p>${escape_html(page.error?.message)}</p>`);
+  push(Error$1);
+  $$payload.out.push(`<h1>`);
+  push_element($$payload, "h1", 5, 0);
+  $$payload.out.push(`${escape_html(page.status)}</h1>`);
+  pop_element();
+  $$payload.out.push(` <p>`);
+  push_element($$payload, "p", 6, 0);
+  $$payload.out.push(`${escape_html(page.error?.message)}</p>`);
+  pop_element();
   pop();
 }
+Error$1.render = function() {
+  throw new Error$1("Component.render(...) is no longer valid in Svelte 5. See https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes for more information");
+};
 export {
   Error$1 as default
 };

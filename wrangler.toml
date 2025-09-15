@@ -2,6 +2,9 @@ name = "nanoword"
 main = ".svelte-kit/cloudflare-workers/index.js"
 compatibility_date = "2024-01-15"
 
+[site]
+bucket = ".svelte-kit/cloudflare-workers/client"
+
 [env.production]
 name = "nanoword"
 routes = [

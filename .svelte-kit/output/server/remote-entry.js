@@ -1,6 +1,6 @@
 import { get_request_store, with_request_store } from "@sveltejs/kit/internal/server";
 import { error, json } from "@sveltejs/kit";
-import { h as create_remote_cache_key, j as stringify_remote_arg, k as parse, f as stringify, B as BROWSER } from "./chunks/shared.js";
+import { k as create_remote_cache_key, l as stringify_remote_arg, j as stringify, d as DEV } from "./chunks/shared.js";
 import { b as base, c as app_dir, p as prerendering } from "./chunks/environment.js";
 function create_validator(validate_or_fn, maybe_fn) {
   if (!maybe_fn) {
@@ -38,13 +38,6 @@ async function get_response(id, arg, state, get_result) {
   await 0;
   const cache_key = create_remote_cache_key(id, stringify_remote_arg(arg, state.transport));
   return (state.remote_data ??= {})[cache_key] ??= get_result();
-}
-function parse_remote_response(data, transport) {
-  const revivers = {};
-  for (const key in transport) {
-    revivers[key] = transport[key].decode;
-  }
-  return parse(data, revivers);
 }
 async function run_remote_function(event, state, allow_cookies, arg, validate, fn) {
   const cleansed = {
@@ -220,23 +213,7 @@ function prerender(validate_or_fn, fn_or_options, maybe_options) {
       const payload = stringify_remote_arg(arg, state.transport);
       const id = __.id;
       const url = `${base}/${app_dir}/remote/${id}${payload ? `/${payload}` : ""}`;
-      if (!state.prerendering && !BROWSER && !event.isRemoteRequest) {
-        try {
-          return await get_response(id, arg, state, async () => {
-            const response = await fetch(new URL(url, event.url.origin).href);
-            if (!response.ok) {
-              throw new Error("Prerendered response not found");
-            }
-            const prerendered = await response.json();
-            if (prerendered.type === "error") {
-              error(prerendered.status, prerendered.error);
-            }
-            (state.remote_data ??= {})[create_remote_cache_key(id, payload)] = prerendered.result;
-            return parse_remote_response(prerendered.result, state.transport);
-          });
-        } catch {
-        }
-      }
+      if (!state.prerendering && !DEV) ;
       if (state.prerendering?.remote_responses.has(url)) {
         return (
           /** @type {Promise<any>} */

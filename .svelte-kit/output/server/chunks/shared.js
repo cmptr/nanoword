@@ -1,5 +1,5 @@
 import { b as base64_encode, t as text_decoder, c as base64_decode } from "./utils.js";
-const BROWSER = false;
+const DEV = true;
 const escaped = {
   "<": "\\u003C",
   "\\": "\\\\",
@@ -477,8 +477,23 @@ function stringify_primitive(thing) {
   if (type === "bigint") return `["BigInt","${thing}"]`;
   return String(thing);
 }
+function validate_depends(route_id, dep) {
+  const match = /^(moz-icon|view-source|jar):/.exec(dep);
+  if (match) {
+    console.warn(
+      `${route_id}: Calling \`depends('${dep}')\` will throw an error in Firefox because \`${match[1]}\` is a special URI scheme`
+    );
+  }
+}
 const INVALIDATED_PARAM = "x-sveltekit-invalidated";
 const TRAILING_SLASH_PARAM = "x-sveltekit-trailing-slash";
+function validate_load_response(data, location_description) {
+  if (data != null && Object.getPrototypeOf(data) !== Object.prototype) {
+    throw new Error(
+      `a load function ${location_description} returned ${typeof data !== "object" ? `a ${typeof data}` : data instanceof Response ? "a Response object" : Array.isArray(data) ? "an array" : "a non-plain object"}, but must return a plain object at the top level (i.e. \`return {...}\`)`
+    );
+  }
+}
 function stringify(data, transport) {
   const encoders = Object.fromEntries(Object.entries(transport).map(([k, v]) => [k, v.encode]));
   return stringify$1(data, encoders);
@@ -502,21 +517,22 @@ function create_remote_cache_key(id, payload) {
   return id + "/" + payload;
 }
 export {
-  BROWSER as B,
   DevalueError as D,
   INVALIDATED_PARAM as I,
   TRAILING_SLASH_PARAM as T,
   is_plain_object as a,
   stringify_string as b,
   escaped as c,
-  stringify$1 as d,
+  DEV as d,
   enumerable_symbols as e,
-  stringify as f,
+  stringify$1 as f,
   get_type as g,
-  create_remote_cache_key as h,
+  validate_load_response as h,
   is_primitive as i,
-  stringify_remote_arg as j,
-  parse as k,
+  stringify as j,
+  create_remote_cache_key as k,
+  stringify_remote_arg as l,
   parse_remote_arg as p,
-  stringify_key as s
+  stringify_key as s,
+  validate_depends as v
 };
