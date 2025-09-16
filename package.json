@@ -17,7 +17,8 @@
     "kv:populate": "node scripts/populate-kv.js populate",
     "kv:list-contents": "node scripts/populate-kv.js list",
     "kv:setup": "node scripts/setup-kv.js create",
-    "kv:list-namespaces": "node scripts/setup-kv.js list"
+    "kv:list-namespaces": "node scripts/setup-kv.js list",
+    "puzzle:create": "node scripts/manual-puzzle.js"
   },
   "keywords": ["crossword", "puzzle", "daily", "sveltekit", "svelte"],
   "author": "",

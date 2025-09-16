@@ -1,0 +1,119 @@
+{
+  "date": "2025-09-16",
+  "grid": [
+    [
+      {
+        "row": 0,
+        "col": 0,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 2,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 3,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 4,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 5,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      }
+    ]
+  ],
+  "solution": [
+    [
+      "U",
+      "N",
+      "I",
+      "Q",
+      "U",
+      "E"
+    ]
+  ],
+  "clues": {
+    "across": [
+      {
+        "number": 1,
+        "clue": "One of a kind",
+        "length": 6,
+        "answer": "UNIQUE"
+      }
+    ],
+    "down": []
+  },
+  "words": {
+    "across": [
+      {
+        "number": 1,
+        "length": 6,
+        "clue": "One of a kind",
+        "answer": "UNIQUE",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row": 0,
+            "col": 4
+          },
+          {
+            "row": 0,
+            "col": 5
+          }
+        ]
+      }
+    ],
+    "down": []
+  }
+}
