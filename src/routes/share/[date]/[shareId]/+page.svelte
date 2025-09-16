@@ -72,7 +72,7 @@
 				<h1 class="text-4xl font-bold mb-2" style="font-family: 'Pixelify Sans', monospace; color: #535353;">
 					nanoword
 				</h1>
-				<div class="text-lg mb-4" style="font-family: 'Tiny5', monospace; color: #666;">
+				<div class="text-2xl mb-4" style="font-family: 'Libre Franklin', sans-serif; color: #666;">
 					{shareData.date}
 				</div>
 				<div class="text-2xl mb-6 {shareData.isRevealed ? 'text-warning' : 'text-success'}">

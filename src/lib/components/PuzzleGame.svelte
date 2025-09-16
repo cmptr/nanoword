@@ -295,7 +295,7 @@
 			nanoword
 		</h1>
 		<div class="text-sm sm:text-lg md:text-xl italic text-gray-600 mb-2">/næn.oʊ-wɜː(r)d/</div>
-		<div class="text-2xl" style="font-family: 'Tiny5', monospace; color: #666;">
+		<div class="text-4xl" style="font-family: 'Libre Franklin', sans-serif; color: #666;">
 			{puzzleData.date}
 		</div>
 	</div>

@@ -109,13 +109,13 @@
 		
 		// Title
 		ctx.fillStyle = '#535353';
-		ctx.font = 'bold 42px monospace';
+		ctx.font = 'bold 42px "Pixelify Sans", monospace';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		ctx.fillText('nanoword', canvas.width / 2, 80);
 		
 		// Date
-		ctx.font = '20px monospace';
+		ctx.font = '20px "Libre Franklin", sans-serif';
 		ctx.fillStyle = '#666666';
 		ctx.fillText(puzzleData.date, canvas.width / 2, 120);
 		
