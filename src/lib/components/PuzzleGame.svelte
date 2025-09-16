@@ -397,31 +397,33 @@
 	/>
 
 	<!-- Main Game Area -->
-	<div class="flex flex-col items-center mt-8">
-		<!-- Clue -->
-		<div class="w-full max-w-2xl mb-8">
-			<div class="bg-white rounded-lg p-6 text-center">
-				{#if gameState.isMultiWord}
-					<div class="text-sm mb-2" style="color: #666; font-family: 'Libre Franklin', sans-serif;">
-						Word {gameState.currentWordIndex + 1} of {puzzleData.totalWords}
+	{#if !gameState.isCompleted}
+		<div class="flex flex-col items-center mt-8">
+			<!-- Clue -->
+			<div class="w-full max-w-2xl mb-8">
+				<div class="bg-white rounded-lg p-6 text-center">
+					{#if gameState.isMultiWord}
+						<div class="text-sm mb-2" style="color: #666; font-family: 'Libre Franklin', sans-serif;">
+							Word {gameState.currentWordIndex + 1} of {puzzleData.totalWords}
+						</div>
+					{/if}
+					<div class="text-3xl leading-relaxed" style="font-family: 'Libre Baskerville', serif; color: #535353;">
+						{currentWordData().clue}
 					</div>
-				{/if}
-				<div class="text-3xl leading-relaxed" style="font-family: 'Libre Baskerville', serif; color: #535353;">
-					{currentWordData().clue}
 				</div>
 			</div>
-		</div>
 
-		<!-- Grid -->
-		<PuzzleGrid 
-			puzzleData={currentPuzzleData()}
-			{gameState}
-			{selectedCell}
-			{handleCellInput}
-			{handleCellSelect}
-			{showingCheckResults}
-		/>
-	</div>
+			<!-- Grid -->
+			<PuzzleGrid 
+				puzzleData={currentPuzzleData()}
+				{gameState}
+				{selectedCell}
+				{handleCellInput}
+				{handleCellSelect}
+				{showingCheckResults}
+			/>
+		</div>
+	{/if}
 
 	<!-- Completion Message -->
 	{#if gameState.isCompleted}
