@@ -10,12 +10,36 @@
 		if (event.key === 'ArrowLeft' && index > 0) {
 			event.preventDefault();
 			handleCellSelect(index - 1);
+			// Focus the previous input field
+			setTimeout(() => {
+				const prevInput = document.querySelector(`input[data-index="${index - 1}"]`);
+				if (prevInput) prevInput.focus();
+			}, 10);
 		} else if (event.key === 'ArrowRight' && index < gameState.userInput.length - 1) {
 			event.preventDefault();
 			handleCellSelect(index + 1);
-		} else if (event.key === 'Backspace' && event.target.value === '' && index > 0) {
+			// Focus the next input field
+			setTimeout(() => {
+				const nextInput = document.querySelector(`input[data-index="${index + 1}"]`);
+				if (nextInput) nextInput.focus();
+			}, 10);
+		} else if (event.key === 'Backspace') {
 			event.preventDefault();
-			handleCellSelect(index - 1);
+			
+			// If current cell is empty and not the first cell, delete previous cell and move to it
+			if (event.target.value === '' && index > 0) {
+				handleCellInput(index - 1, ''); // Clear the previous cell
+				handleCellSelect(index - 1); // Move to the previous cell
+				// Focus the previous input field
+				setTimeout(() => {
+					const prevInput = document.querySelector(`input[data-index="${index - 1}"]`);
+					if (prevInput) prevInput.focus();
+				}, 10);
+			} 
+			// If current cell has content, just clear it (stay in same cell)
+			else if (event.target.value !== '') {
+				handleCellInput(index, ''); // Clear current cell
+			}
 		}
 	}
 
