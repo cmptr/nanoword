@@ -6,6 +6,7 @@
 
 	let { puzzleData } = $props();
 
+	// Initialize game state for multi-word or single-word puzzles
 	let gameState = $state({
 		userInput: new Array(puzzleData.grid[0].length).fill(''),
 		hintCount: 0,
@@ -14,13 +15,61 @@
 		isTimerRunning: false,
 		isCompleted: false,
 		completionText: '',
-		hintRevealed: new Array(puzzleData.grid[0].length).fill(false)
+		hintRevealed: new Array(puzzleData.grid[0].length).fill(false),
+		// Multi-word specific state
+		currentWordIndex: puzzleData.currentWordIndex || 0,
+		isMultiWord: puzzleData.isMultiWord || false,
+		completedWords: 0
 	});
 
 	let showRevealAlert = $state(false);
 	let showingCheckResults = $state(false);
 
 	let selectedCell = $state(0);
+
+	// Reactive current word data
+	let currentWordData = $derived(() => {
+		if (gameState.isMultiWord && puzzleData.allWords) {
+			return puzzleData.allWords[gameState.currentWordIndex];
+		}
+		return puzzleData.words.across[0];
+	});
+
+	// Reactive current puzzle state
+	let currentPuzzleData = $derived(() => {
+		if (gameState.isMultiWord && puzzleData.allWords) {
+			const currentWord = puzzleData.allWords[gameState.currentWordIndex];
+			const wordLength = currentWord.length;
+			
+			// Create grid for current word
+			const grid = [
+				Array.from({ length: wordLength }, (_, col) => ({
+					row: 0,
+					col: col,
+					contents: "",
+					isBlack: false,
+					number: "",
+					acrossNumber: 1,
+					downNumber: ""
+				}))
+			];
+			
+			return {
+				...puzzleData,
+				grid: grid,
+				solution: [currentWord.answer.split('')],
+				clues: {
+					across: [currentWord],
+					down: []
+				},
+				words: {
+					across: [currentWord],
+					down: []
+				}
+			};
+		}
+		return puzzleData;
+	});
 
 	onMount(() => {
 		loadProgress();
@@ -157,7 +206,7 @@
 		// Don't check if already completed
 		if (gameState.isCompleted) return;
 		
-		const solution = puzzleData.solution[0];
+		const solution = currentPuzzleData().solution[0];
 		
 		// Check if all cells are filled
 		const allFilled = gameState.userInput.every(cell => cell !== '');
@@ -166,8 +215,44 @@
 		// Check if all cells are correct
 		const allCorrect = gameState.userInput.every((cell, index) => cell === solution[index]);
 		if (allCorrect) {
-			completeGame();
+			if (gameState.isMultiWord) {
+				completeCurrentWord();
+			} else {
+				completeGame();
+			}
 		}
+	}
+
+	function completeCurrentWord() {
+		gameState.completedWords++;
+		
+		// Check if all words are completed
+		if (gameState.completedWords >= puzzleData.totalWords) {
+			completeGame();
+			return;
+		}
+		
+		// Advance to next word
+		gameState.currentWordIndex++;
+		
+		// Reset user input for new word
+		const nextWordLength = puzzleData.allWords[gameState.currentWordIndex].length;
+		gameState.userInput = new Array(nextWordLength).fill('');
+		gameState.hintRevealed = new Array(nextWordLength).fill(false);
+		
+		// Reset selected cell
+		selectedCell = 0;
+		
+		// Save progress
+		saveProgress();
+		
+		// Focus first cell of new word
+		setTimeout(() => {
+			const firstInput = document.querySelector(`input[data-index="0"]`);
+			if (firstInput) {
+				firstInput.focus();
+			}
+		}, 100);
 	}
 
 	function checkSolution() {
@@ -316,15 +401,20 @@
 		<!-- Clue -->
 		<div class="w-full max-w-2xl mb-8">
 			<div class="bg-white rounded-lg p-6 text-center">
+				{#if gameState.isMultiWord}
+					<div class="text-sm mb-2" style="color: #666; font-family: 'Libre Franklin', sans-serif;">
+						Word {gameState.currentWordIndex + 1} of {puzzleData.totalWords}
+					</div>
+				{/if}
 				<div class="text-3xl leading-relaxed" style="font-family: 'Libre Baskerville', serif; color: #535353;">
-					{puzzleData.clues.across[0].clue}
+					{currentWordData().clue}
 				</div>
 			</div>
 		</div>
 
 		<!-- Grid -->
 		<PuzzleGrid 
-			{puzzleData}
+			puzzleData={currentPuzzleData()}
 			{gameState}
 			{selectedCell}
 			{handleCellInput}

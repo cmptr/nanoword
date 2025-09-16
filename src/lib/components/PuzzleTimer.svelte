@@ -59,9 +59,19 @@
 			</div>
 			
 			<div class="stat px-0 text-left">
-				<div class="stat-title text-xs" style="color: #535353;">Hints</div>
+				<div class="stat-title text-xs" style="color: #535353;">
+					{#if gameState.isMultiWord}
+						Word {gameState.currentWordIndex + 1}/5
+					{:else}
+						Hints
+					{/if}
+				</div>
 				<div class="stat-value text-lg font-bold text-orange-600">
-					{gameState.hintCount}
+					{#if gameState.isMultiWord}
+						💡 {gameState.hintCount}
+					{:else}
+						{gameState.hintCount}
+					{/if}
 				</div>
 			</div>
 		</div>

@@ -1,5 +1,170 @@
 {
   "date": "2025-09-16",
+  "isMultiWord": true,
+  "currentWordIndex": 0,
+  "totalWords": 5,
+  "allWords": [
+    {
+      "number": 1,
+      "length": 6,
+      "clue": "What Neo entered",
+      "answer": "MATRIX",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "length": 8,
+      "clue": "A time-tracking tool",
+      "answer": "CALENDAR",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "length": 6,
+      "clue": "Ulterior motive",
+      "answer": "AGENDA",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "length": 4,
+      "clue": "Minnesota ____",
+      "answer": "NICE",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "length": 6,
+      "clue": "Sometimes however",
+      "answer": "ALBEIT",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        }
+      ]
+    }
+  ],
   "grid": [
     [
       {
@@ -60,21 +225,47 @@
   ],
   "solution": [
     [
-      "U",
-      "N",
+      "M",
+      "A",
+      "T",
+      "R",
       "I",
-      "Q",
-      "U",
-      "E"
+      "X"
     ]
   ],
   "clues": {
     "across": [
       {
         "number": 1,
-        "clue": "One of a kind",
         "length": 6,
-        "answer": "UNIQUE"
+        "clue": "What Neo entered",
+        "answer": "MATRIX",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row": 0,
+            "col": 4
+          },
+          {
+            "row": 0,
+            "col": 5
+          }
+        ]
       }
     ],
     "down": []
@@ -84,8 +275,8 @@
       {
         "number": 1,
         "length": 6,
-        "clue": "One of a kind",
-        "answer": "UNIQUE",
+        "clue": "What Neo entered",
+        "answer": "MATRIX",
         "positions": [
           {
             "row": 0,

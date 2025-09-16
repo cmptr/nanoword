@@ -130,6 +130,56 @@ class ManualPuzzleCLI {
     };
   }
 
+  createMultiWordPuzzleData(words, clues, date) {
+    const wordEntries = words.map((word, index) => {
+      const wordLength = word.length;
+      
+      return {
+        number: index + 1,
+        length: wordLength,
+        clue: clues[index],
+        answer: word,
+        positions: Array.from({ length: wordLength }, (_, col) => ({ row: 0, col: col }))
+      };
+    });
+
+    // For now, use the first word for grid structure (will be handled differently in game logic)
+    const firstWord = words[0];
+    const wordLength = firstWord.length;
+    
+    const grid = [
+      Array.from({ length: wordLength }, (_, col) => ({
+        row: 0,
+        col: col,
+        contents: "",
+        isBlack: false,
+        number: "",
+        acrossNumber: 1,
+        downNumber: ""
+      }))
+    ];
+    
+    const solution = [firstWord.split('')];
+    
+    return {
+      date: date,
+      isMultiWord: true,
+      currentWordIndex: 0,
+      totalWords: 5,
+      allWords: wordEntries,
+      grid: grid,
+      solution: solution,
+      clues: {
+        across: [wordEntries[0]], // Start with first word
+        down: []
+      },
+      words: {
+        across: [wordEntries[0]], // Start with first word
+        down: []
+      }
+    };
+  }
+
   async savePuzzleToFile(puzzleData, date) {
     const puzzleDir = path.join(__dirname, '..', 'daily-puzzles');
     
@@ -183,18 +233,29 @@ class ManualPuzzleCLI {
   }
 
   async createInteractive() {
-    console.log('🎯 Manual Puzzle Creator for Nanoword\n');
+    console.log('🎯 Manual Puzzle Creator for Nanoword (5 Words)\n');
     
     try {
-      // Get word
-      const wordInput = await this.prompt('Enter the word (4-10 letters): ');
-      const word = this.validateWord(wordInput);
-      console.log(`✓ Word: ${word}\n`);
+      const words = [];
+      const clues = [];
       
-      // Get clue
-      const clueInput = await this.prompt('Enter the clue: ');
-      const clue = this.validateClue(clueInput);
-      console.log(`✓ Clue: ${clue}\n`);
+      // Get 5 words and clues
+      for (let i = 1; i <= 5; i++) {
+        console.log(`--- Word ${i}/5 ---`);
+        
+        // Get word
+        const wordInput = await this.prompt(`Enter word ${i} (4-10 letters): `);
+        const word = this.validateWord(wordInput);
+        console.log(`✓ Word ${i}: ${word}`);
+        
+        // Get clue
+        const clueInput = await this.prompt(`Enter clue ${i}: `);
+        const clue = this.validateClue(clueInput);
+        console.log(`✓ Clue ${i}: ${clue}\n`);
+        
+        words.push(word);
+        clues.push(clue);
+      }
       
       // Get date (optional)
       const dateInput = await this.prompt('Enter date (YYYY-MM-DD) or press Enter for today: ');
@@ -203,8 +264,9 @@ class ManualPuzzleCLI {
       
       // Confirm
       console.log('📋 Preview:');
-      console.log(`   Word: ${word}`);
-      console.log(`   Clue: ${clue}`);
+      for (let i = 0; i < 5; i++) {
+        console.log(`   Word ${i + 1}: ${words[i]} - ${clues[i]}`);
+      }
       console.log(`   Date: ${date}\n`);
       
       const confirm = await this.prompt('Create this puzzle? (y/N): ');
@@ -214,7 +276,7 @@ class ManualPuzzleCLI {
       }
       
       // Create puzzle
-      const puzzleData = this.createPuzzleData(word, clue, date);
+      const puzzleData = this.createMultiWordPuzzleData(words, clues, date);
       const filepath = await this.savePuzzleToFile(puzzleData, date);
       
       // Ask about KV upload
@@ -232,19 +294,45 @@ class ManualPuzzleCLI {
     }
   }
 
-  async createFromArgs(word, clue, date) {
+  async createFromArgs(...args) {
     try {
-      const validWord = this.validateWord(word);
-      const validClue = this.validateClue(clue);
-      const validDate = this.validateDate(date);
-      
-      const puzzleData = this.createPuzzleData(validWord, validClue, validDate);
-      const filepath = await this.savePuzzleToFile(puzzleData, validDate);
-      
-      console.log('📤 Uploading to KV...');
-      await this.uploadToKV(filepath, validDate);
-      
-      console.log('🎉 Puzzle created and uploaded successfully!');
+      if (args.length === 10 || args.length === 11) {
+        // 5-word mode: word1 clue1 word2 clue2 word3 clue3 word4 clue4 word5 clue5 [date]
+        const words = [];
+        const clues = [];
+        
+        for (let i = 0; i < 10; i += 2) {
+          words.push(this.validateWord(args[i]));
+          clues.push(this.validateClue(args[i + 1]));
+        }
+        
+        const date = this.validateDate(args[10]);
+        const puzzleData = this.createMultiWordPuzzleData(words, clues, date);
+        const filepath = await this.savePuzzleToFile(puzzleData, date);
+        
+        console.log('📤 Uploading to KV...');
+        await this.uploadToKV(filepath, date);
+        
+        console.log('🎉 5-word puzzle created and uploaded successfully!');
+        
+      } else if (args.length === 2 || args.length === 3) {
+        // Single word mode (legacy): word clue [date]
+        const [word, clue, date] = args;
+        const validWord = this.validateWord(word);
+        const validClue = this.validateClue(clue);
+        const validDate = this.validateDate(date);
+        
+        const puzzleData = this.createPuzzleData(validWord, validClue, validDate);
+        const filepath = await this.savePuzzleToFile(puzzleData, validDate);
+        
+        console.log('📤 Uploading to KV...');
+        await this.uploadToKV(filepath, validDate);
+        
+        console.log('🎉 Single-word puzzle created and uploaded successfully!');
+        
+      } else {
+        throw new Error('Invalid number of arguments. Use --help for usage information.');
+      }
       
     } catch (error) {
       console.error('❌ Error:', error.message);
@@ -257,19 +345,20 @@ class ManualPuzzleCLI {
 🎯 Manual Puzzle Creator for Nanoword
 
 Usage:
-  node manual-puzzle.js                           # Interactive mode
-  node manual-puzzle.js <word> <clue> [date]      # Command line mode
-  node manual-puzzle.js --help                    # Show this help
+  node manual-puzzle.js                                    # Interactive mode (5 words)
+  node manual-puzzle.js <word> <clue> [date]               # Single word mode  
+  node manual-puzzle.js <w1> <c1> <w2> <c2> ... [date]     # 5-word mode
+  node manual-puzzle.js --help                             # Show this help
 
 Arguments:
-  word    The puzzle word (4-10 letters, A-Z only)
-  clue    The clue for the word (quoted if contains spaces)
-  date    Date in YYYY-MM-DD format (optional, defaults to today)
+  word/w#   The puzzle word (4-10 letters, A-Z only)
+  clue/c#   The clue for the word (quoted if contains spaces)
+  date      Date in YYYY-MM-DD format (optional, defaults to today)
 
 Examples:
-  node manual-puzzle.js                                    # Interactive
-  node manual-puzzle.js STREAM "Flow of water or data"    # Today's date
-  node manual-puzzle.js MATRIX "Neo's reality" 2025-01-15 # Specific date
+  node manual-puzzle.js                                           # Interactive 5-word mode
+  node manual-puzzle.js STREAM "Flow of water"                   # Single word
+  node manual-puzzle.js MATRIX "Math grid" STREAM "Data flow" SIGNAL "WiFi strength" BRIDGE "Connects" CANVAS "Art surface" # 5 words
 
 Environment:
   KV_NAMESPACE_ID    Cloudflare KV namespace ID (optional if in wrangler.toml)
@@ -291,8 +380,7 @@ async function main() {
     await cli.createInteractive();
   } else if (args.length >= 2) {
     // Command line mode
-    const [word, clue, date] = args;
-    await cli.createFromArgs(word, clue, date);
+    await cli.createFromArgs(...args);
   } else {
     console.error('❌ Invalid arguments. Use --help for usage information.');
     process.exit(1);
