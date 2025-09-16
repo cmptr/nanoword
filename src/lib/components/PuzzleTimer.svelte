@@ -47,58 +47,62 @@
 		: `Hint (${gameState.maxHints - gameState.hintCount} left)`);
 </script>
 
-<div class="flex justify-between items-center p-4 border-t-2 border-b-2 border-gray-600 bg-white mb-6">
-	<div class="flex items-center gap-4">
-		<div class="flex items-center gap-2">
-			<span class="text-sm" style="color: #535353;">Time:</span>
-			<span class="text-lg font-bold text-blue-600">
-				{formatTime(currentTime)}
-			</span>
+<div class="bg-white mb-6">
+	<div class="p-4">
+		<!-- Stats Row -->
+		<div class="flex justify-center gap-6 mb-4">
+			<div class="stat px-0 text-right">
+				<div class="stat-title text-xs" style="color: #535353;">Time</div>
+				<div class="stat-value text-lg font-bold text-blue-600">
+					{formatTime(currentTime)}
+				</div>
+			</div>
+			
+			<div class="stat px-0 text-left">
+				<div class="stat-title text-xs" style="color: #535353;">Hints</div>
+				<div class="stat-value text-lg font-bold text-orange-600">
+					{gameState.hintCount}
+				</div>
+			</div>
 		</div>
-		
-		<div class="flex items-center gap-2">
-			<span class="text-xs" style="color: #535353;">Hints:</span>
-			<span class="px-2 py-1 text-sm font-bold text-orange-600 bg-orange-100 rounded">
-				{gameState.hintCount}
-			</span>
-		</div>
-	</div>
 
-	<div class="flex items-center gap-3">
-		<button 
-			class="btn btn-sm"
-			style="color: #535353; background-color: white; border: none;"
-			disabled={gameState.hintCount >= gameState.maxHints || gameState.isCompleted}
-			on:click={useHint}
-		>
-			{hintButtonText}
-		</button>
-		
-		<button 
-			class="btn btn-sm"
-			style="color: #535353; background-color: white; border: none;"
-			disabled={gameState.isCompleted}
-			on:click={checkSolution}
-		>
-			Check
-		</button>
-		
-		<button 
-			class="btn btn-sm"
-			style="color: #535353; background-color: white; border: none;"
-			disabled={gameState.isCompleted}
-			on:click={clearGrid}
-		>
-			Clear
-		</button>
-		
-		<button 
-			class="btn btn-sm"
-			style="color: #535353; background-color: white; border: none;"
-			disabled={gameState.isCompleted}
-			on:click={revealSolution}
-		>
-			Reveal
-		</button>
+		<!-- Controls Row -->
+		<div class="flex flex-wrap justify-center gap-2">
+			<button 
+				class="btn btn-sm flex-none"
+				style="color: #535353; background-color: white; border: 1px solid #d1d5db;"
+				disabled={gameState.hintCount >= gameState.maxHints || gameState.isCompleted}
+				on:click={useHint}
+			>
+				{hintButtonText}
+			</button>
+			
+			<button 
+				class="btn btn-sm flex-none"
+				style="color: #535353; background-color: white; border: 1px solid #d1d5db;"
+				disabled={gameState.isCompleted}
+				on:click={checkSolution}
+			>
+				Check
+			</button>
+			
+			<button 
+				class="btn btn-sm flex-none"
+				style="color: #535353; background-color: white; border: 1px solid #d1d5db;"
+				disabled={gameState.isCompleted}
+				on:click={clearGrid}
+			>
+				Clear
+			</button>
+			
+			<button 
+				class="btn btn-sm flex-none"
+				style="color: #535353; background-color: white; border: 1px solid #d1d5db;"
+				disabled={gameState.isCompleted}
+				on:click={revealSolution}
+			>
+				Reveal
+			</button>
+		</div>
 	</div>
 </div>
