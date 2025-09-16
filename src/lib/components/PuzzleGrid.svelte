@@ -102,7 +102,7 @@
 						maxlength="1"
 						data-index={index}
 						class="w-full h-full text-center font-bold border-none outline-none bg-transparent focus:bg-blue-50 focus:ring-2 focus:ring-blue-500 {gameState.hintRevealed[index] ? 'bg-orange-50 text-orange-600' : ''} {selectedCell === index && !showingCheckResults ? 'ring-2 ring-blue-500 bg-blue-50' : ''} {getCellCheckClass(index)}"
-						style="width: {cellSize}px; height: {cellSize}px; min-width: {cellSize}px; min-height: {cellSize}px; font-size: {fontSize}px; font-family: 'Libre Franklin', sans-serif;"
+						style="width: {cellSize}px; height: {cellSize}px; min-width: {cellSize}px; min-height: {cellSize}px; font-size: {fontSize}px; font-family: 'Libre Franklin', sans-serif; caret-color: transparent;"
 						value={gameState.userInput[index] || ''}
 						disabled={gameState.isCompleted}
 						on:input={(e) => onInput(e, index)}
