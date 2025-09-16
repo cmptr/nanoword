@@ -38,9 +38,9 @@
     },
     {
       "number": 2,
-      "length": 8,
-      "clue": "A time-tracking tool",
-      "answer": "CALENDAR",
+      "length": 4,
+      "clue": "Minnesota ____",
+      "answer": "NICE",
       "positions": [
         {
           "row": 0,
@@ -57,22 +57,6 @@
         {
           "row": 0,
           "col": 3
-        },
-        {
-          "row": 0,
-          "col": 4
-        },
-        {
-          "row": 0,
-          "col": 5
-        },
-        {
-          "row": 0,
-          "col": 6
-        },
-        {
-          "row": 0,
-          "col": 7
         }
       ]
     },
@@ -110,9 +94,9 @@
     },
     {
       "number": 4,
-      "length": 4,
-      "clue": "Minnesota ____",
-      "answer": "NICE",
+      "length": 8,
+      "clue": "A time-tracking tool perhaps",
+      "answer": "CALENDAR",
       "positions": [
         {
           "row": 0,
@@ -129,6 +113,22 @@
         {
           "row": 0,
           "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
         }
       ]
     },
