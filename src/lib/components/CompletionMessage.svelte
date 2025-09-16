@@ -1,7 +1,12 @@
 <script>
 	let { completionText, puzzleData, gameState, formatTime } = $props();
 
-	async function shareAsUrl() {
+	let shareUrl = $state('');
+	let showShareUrl = $state(false);
+	let copyButtonText = $state('📋 Copy');
+	let copyPngButtonText = $state('📋 Copy PNG');
+
+	async function generateShareUrl() {
 		try {
 			const date = puzzleData.date;
 			const currentTime = gameState.startTime ? formatTime(Date.now() - gameState.startTime) : '00:00.000';
@@ -35,26 +40,43 @@
 				throw new Error(`Failed to create share: ${responseData.error || response.statusText}`);
 			}
 			
-			// Generate share URL
-			const shareUrl = `${window.location.origin}/share/${date}/${shareId}`;
+			// Generate and show share URL
+			shareUrl = `${window.location.origin}/share/${date}/${shareId}`;
+			showShareUrl = true;
 			
-			// Check if Web Share API is available
-			if (navigator.share) {
-				try {
-					await navigator.share({
-						url: shareUrl
-					});
-				} catch (err) {
-					if (err.name !== 'AbortError') {
-						copyToClipboard(shareUrl);
-					}
-				}
-			} else {
-				copyToClipboard(shareUrl);
-			}
 		} catch (error) {
-			console.error('Error sharing result:', error);
-			showShareFeedback('Failed to create share. Please try again.');
+			console.error('Error generating share URL:', error);
+		}
+	}
+
+	async function copyShareUrl() {
+		try {
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				await navigator.clipboard.writeText(shareUrl);
+				copyButtonText = '✓ Copied';
+				setTimeout(() => {
+					copyButtonText = '📋 Copy';
+				}, 2000);
+			} else {
+				const textarea = document.createElement('textarea');
+				textarea.value = shareUrl;
+				textarea.style.position = 'fixed';
+				textarea.style.opacity = '0';
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textarea);
+				copyButtonText = '✓ Copied';
+				setTimeout(() => {
+					copyButtonText = '📋 Copy';
+				}, 2000);
+			}
+		} catch (err) {
+			console.error('Failed to copy to clipboard:', err);
+			copyButtonText = '❌ Failed';
+			setTimeout(() => {
+				copyButtonText = '📋 Copy';
+			}, 2000);
 		}
 	}
 
@@ -154,7 +176,10 @@
 		try {
 			// Check if clipboard API is available
 			if (!navigator.clipboard || !navigator.clipboard.write) {
-				showShareFeedback('Clipboard not supported in this browser');
+				copyPngButtonText = '❌ Not supported';
+				setTimeout(() => {
+					copyPngButtonText = '📋 Copy PNG';
+				}, 2000);
 				return;
 			}
 			
@@ -168,16 +193,25 @@
 							'image/png': blob
 						})
 					]);
-					showShareFeedback('PNG copied to clipboard!');
+					copyPngButtonText = '✓ Copied';
+					setTimeout(() => {
+						copyPngButtonText = '📋 Copy PNG';
+					}, 2000);
 				} catch (err) {
 					console.error('Failed to copy to clipboard:', err);
-					showShareFeedback('Failed to copy to clipboard. Try downloading instead.');
+					copyPngButtonText = '❌ Failed';
+					setTimeout(() => {
+						copyPngButtonText = '📋 Copy PNG';
+					}, 2000);
 				}
 			}, 'image/png');
 			
 		} catch (error) {
 			console.error('Error copying PNG to clipboard:', error);
-			showShareFeedback('Failed to copy PNG. Please try again.');
+			copyPngButtonText = '❌ Failed';
+			setTimeout(() => {
+				copyPngButtonText = '📋 Copy PNG';
+			}, 2000);
 		}
 	}
 
@@ -196,12 +230,10 @@
 				document.body.removeChild(a);
 				URL.revokeObjectURL(url);
 				
-				showShareFeedback('PNG downloaded successfully!');
 			}, 'image/png');
 			
 		} catch (error) {
 			console.error('Error downloading PNG:', error);
-			showShareFeedback('Failed to download PNG. Please try again.');
 		}
 	}
 
@@ -211,48 +243,6 @@
 			return v.toString(16);
 		});
 	}
-
-	async function copyToClipboard(text) {
-		try {
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				await navigator.clipboard.writeText(text);
-				showShareFeedback('Copied to clipboard!');
-			} else {
-				const textarea = document.createElement('textarea');
-				textarea.value = text;
-				textarea.style.position = 'fixed';
-				textarea.style.opacity = '0';
-				document.body.appendChild(textarea);
-				textarea.select();
-				document.execCommand('copy');
-				document.body.removeChild(textarea);
-				showShareFeedback('Copied to clipboard!');
-			}
-		} catch (err) {
-			console.error('Failed to copy to clipboard:', err);
-			showShareFeedback('Failed to copy. Please try again.');
-		}
-	}
-
-	function showShareFeedback(message) {
-		// Create temporary feedback element
-		const feedback = document.createElement('div');
-		feedback.textContent = message;
-		feedback.className = 'toast toast-top toast-end';
-		feedback.innerHTML = `
-			<div class="alert alert-success">
-				<span>${message}</span>
-			</div>
-		`;
-		
-		document.body.appendChild(feedback);
-		
-		setTimeout(() => {
-			if (feedback.parentNode) {
-				feedback.parentNode.removeChild(feedback);
-			}
-		}, 3000);
-	}
 </script>
 
 <div class="text-center mt-12">
@@ -261,19 +251,40 @@
 			<h2 class="card-title justify-center text-3xl mb-4" style="font-family: 'Micro 5', monospace; color: #535353;">
 				{completionText}
 			</h2>
-			<div class="card-actions justify-center flex-col gap-4">
-				<div class="flex gap-2 flex-wrap justify-center">
-					<button class="btn btn-primary" style="font-family: 'Pixelify Sans', sans-serif;" on:click={shareAsUrl}>
-						📤 Share URL
-					</button>
-				</div>
-				<div class="flex gap-2 flex-wrap justify-center">
-					<button class="btn btn-secondary" style="font-family: 'Pixelify Sans', sans-serif;" on:click={copyPngToClipboard}>
-						📋 Copy PNG
-					</button>
-					<button class="btn btn-outline btn-secondary" style="font-family: 'Pixelify Sans', sans-serif;" on:click={downloadPng}>
-						📥 Download PNG
-					</button>
+			<div class="card-actions justify-center">
+				<div class="flex flex-col gap-3 items-center w-full">
+					{#if !showShareUrl}
+						<button class="btn bg-white border-gray-300 hover:bg-gray-50" style="font-family: 'Pixelify Sans', sans-serif; color: #535353;" on:click={generateShareUrl}>
+							📤 Generate Share URL
+						</button>
+					{:else}
+						<div class="w-full max-w-sm">
+							<div class="flex gap-2 items-center">
+								<input 
+									type="text" 
+									class="input input-bordered flex-1 text-sm" 
+									style="font-family: 'Libre Franklin', sans-serif;"
+									value={shareUrl} 
+									readonly 
+								/>
+								<button 
+									class="btn bg-white border-gray-300 hover:bg-gray-50 btn-sm" 
+									style="font-family: 'Pixelify Sans', sans-serif; color: #535353;" 
+									on:click={copyShareUrl}
+								>
+									{copyButtonText}
+								</button>
+							</div>
+						</div>
+					{/if}
+					<div class="flex gap-2">
+						<button class="btn bg-white border-gray-300 hover:bg-gray-50" style="font-family: 'Pixelify Sans', sans-serif; color: #535353;" on:click={copyPngToClipboard}>
+							{copyPngButtonText}
+						</button>
+						<button class="btn bg-white border-gray-300 hover:bg-gray-50" style="font-family: 'Pixelify Sans', sans-serif; color: #535353;" on:click={downloadPng}>
+							📥 Download PNG
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
