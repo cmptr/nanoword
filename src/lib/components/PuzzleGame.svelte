@@ -71,16 +71,32 @@
 		return puzzleData;
 	});
 
+	// Focus first cell when puzzle data changes (for multi-word puzzles)
+	$effect(() => {
+		// This will run when currentPuzzleData changes
+		if (currentPuzzleData) {
+			focusFirstCell();
+		}
+	});
+
 	onMount(() => {
 		loadProgress();
 		if (!gameState.isCompleted) {
 			startTimer();
 		}
+		// Focus the first cell after component mounts
+		focusFirstCell();
 	});
 
 	function getPuzzleStorageKey() {
-		const puzzleWord = puzzleData.words.across[0].answer;
-		return `nanoword-progress-${puzzleData.date}-${puzzleWord}`;
+		// For multi-word puzzles, use date and multi-word identifier
+		// For single-word puzzles, use date and the word
+		if (puzzleData.isMultiWord) {
+			return `nanoword-progress-${puzzleData.date}-multiword`;
+		} else {
+			const puzzleWord = puzzleData.words.across[0].answer;
+			return `nanoword-progress-${puzzleData.date}-${puzzleWord}`;
+		}
 	}
 
 	function saveProgress() {
@@ -92,7 +108,11 @@
 			wasTimerRunning: gameState.isTimerRunning,
 			isCompleted: gameState.isCompleted,
 			completionText: gameState.completionText,
-			hintRevealed: gameState.hintRevealed
+			hintRevealed: gameState.hintRevealed,
+			// Multi-word progress state
+			currentWordIndex: gameState.currentWordIndex,
+			isMultiWord: gameState.isMultiWord,
+			completedWords: gameState.completedWords
 		};
 
 		console.log('Saving progress:', { 
@@ -142,6 +162,28 @@
 			gameState.hintCount = progress.hintCount || 0;
 			gameState.hintRevealed = progress.hintRevealed || new Array(puzzleData.grid[0].length).fill(false);
 
+			// Restore multi-word state
+			if (progress.isMultiWord !== undefined) {
+				gameState.isMultiWord = progress.isMultiWord;
+				gameState.currentWordIndex = progress.currentWordIndex || 0;
+				gameState.completedWords = progress.completedWords || 0;
+				
+				// For multi-word puzzles, ensure userInput and hintRevealed match current word length
+				if (gameState.isMultiWord && puzzleData.allWords) {
+					const currentWord = puzzleData.allWords[gameState.currentWordIndex];
+					if (currentWord) {
+						const currentWordLength = currentWord.length;
+						// Only resize if the arrays don't match the current word length
+						if (gameState.userInput.length !== currentWordLength) {
+							gameState.userInput = new Array(currentWordLength).fill('');
+						}
+						if (gameState.hintRevealed.length !== currentWordLength) {
+							gameState.hintRevealed = new Array(currentWordLength).fill(false);
+						}
+					}
+				}
+			}
+
 			// Restore timer state for all puzzles
 			if (progress.elapsedTime !== undefined) {
 				gameState.startTime = Date.now() - progress.elapsedTime;
@@ -154,6 +196,8 @@
 				gameState.isTimerRunning = false;
 			}
 
+			// Focus first cell after loading progress
+			focusFirstCell();
 			return true;
 		} catch (e) {
 			console.error('Error loading saved progress:', e);
@@ -200,6 +244,16 @@
 
 	function handleCellSelect(index) {
 		selectedCell = index;
+	}
+
+	function focusFirstCell() {
+		// Focus the first input cell after a short delay to ensure DOM is ready
+		setTimeout(() => {
+			const firstInput = document.querySelector(`input[data-index="0"]`);
+			if (firstInput && !gameState.isCompleted) {
+				firstInput.focus();
+			}
+		}, 100);
 	}
 
 	function checkForCompletion() {
@@ -330,6 +384,9 @@
 		stopTimer();
 		gameState.startTime = Date.now();
 		startTimer();
+		
+		// Focus first cell after clearing
+		focusFirstCell();
 	}
 
 	function useHint() {

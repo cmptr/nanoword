@@ -1,0 +1,308 @@
+{
+  "date": "2025-09-18",
+  "isMultiWord": true,
+  "currentWordIndex": 0,
+  "totalWords": 5,
+  "allWords": [
+    {
+      "number": 1,
+      "length": 5,
+      "clue": "A pleasant scent",
+      "answer": "AROMA",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "length": 7,
+      "clue": "Some might say diary",
+      "answer": "JOURNAL",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "length": 6,
+      "clue": "To suppress or remove",
+      "answer": "CENSOR",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "length": 8,
+      "clue": "Often",
+      "answer": "FREQUENT",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "length": 8,
+      "clue": "Ideallistically positive person",
+      "answer": "OPTIMIST",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ]
+    }
+  ],
+  "grid": [
+    [
+      {
+        "row": 0,
+        "col": 0,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 2,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 3,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 4,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      }
+    ]
+  ],
+  "solution": [
+    [
+      "A",
+      "R",
+      "O",
+      "M",
+      "A"
+    ]
+  ],
+  "clues": {
+    "across": [
+      {
+        "number": 1,
+        "length": 5,
+        "clue": "A pleasant scent",
+        "answer": "AROMA",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row": 0,
+            "col": 4
+          }
+        ]
+      }
+    ],
+    "down": []
+  },
+  "words": {
+    "across": [
+      {
+        "number": 1,
+        "length": 5,
+        "clue": "A pleasant scent",
+        "answer": "AROMA",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row": 0,
+            "col": 4
+          }
+        ]
+      }
+    ],
+    "down": []
+  }
+}

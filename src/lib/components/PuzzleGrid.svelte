@@ -117,7 +117,7 @@
 							class="absolute top-0 left-1 pointer-events-none font-normal"
 							style="font-size: {Math.floor(cellSize * 0.26)}px; font-family: 'Micro 5', monospace; color: #535353;"
 						>
-							1
+							{gameState.isMultiWord ? gameState.currentWordIndex + 1 : 1}
 						</div>
 					{/if}
 				</div>

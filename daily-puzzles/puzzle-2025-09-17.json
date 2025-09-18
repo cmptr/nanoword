@@ -1,0 +1,294 @@
+{
+  "date": "2025-09-17",
+  "isMultiWord": true,
+  "currentWordIndex": 0,
+  "totalWords": 5,
+  "allWords": [
+    {
+      "number": 1,
+      "length": 4,
+      "clue": "A yearnful exclamation",
+      "answer": "ALAS",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "length": 7,
+      "clue": "Tune you can't lose",
+      "answer": "EARWORM",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "length": 9,
+      "clue": "One who leads a desperate life",
+      "answer": "HOUSEWIFE",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        },
+        {
+          "row": 0,
+          "col": 8
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "length": 7,
+      "clue": "Melody's bedfellow",
+      "answer": "HARMONY",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "length": 8,
+      "clue": "To procrastinate",
+      "answer": "LOLLYGAG",
+      "positions": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        }
+      ]
+    }
+  ],
+  "grid": [
+    [
+      {
+        "row": 0,
+        "col": 0,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 2,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      },
+      {
+        "row": 0,
+        "col": 3,
+        "contents": "",
+        "isBlack": false,
+        "number": "",
+        "acrossNumber": 1,
+        "downNumber": ""
+      }
+    ]
+  ],
+  "solution": [
+    [
+      "A",
+      "L",
+      "A",
+      "S"
+    ]
+  ],
+  "clues": {
+    "across": [
+      {
+        "number": 1,
+        "length": 4,
+        "clue": "A yearnful exclamation",
+        "answer": "ALAS",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          }
+        ]
+      }
+    ],
+    "down": []
+  },
+  "words": {
+    "across": [
+      {
+        "number": 1,
+        "length": 4,
+        "clue": "A yearnful exclamation",
+        "answer": "ALAS",
+        "positions": [
+          {
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row": 0,
+            "col": 3
+          }
+        ]
+      }
+    ],
+    "down": []
+  }
+}
